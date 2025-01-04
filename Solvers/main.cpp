@@ -1,41 +1,55 @@
 #include <iostream>
 #include <fstream>
-#include "EulerSolver.hpp"
+#include "RK2Solver.hpp"
+#include "Storage.hpp"
 
 int main() {
-    // Oscillator Van der Pol function
     auto vanderpol = [](double t, const std::vector<double>& y) {
-        double mu = 6.0; // Parameter for stiffness
-        double p = 1.0;  // Parameter for scaling
+        double mu = 6.0;
+        double p = 1.0;
         return std::vector<double>{
-            y[1],
+                y[1],
                 (mu* (1 - y[0] * y[0])* y[1] - y[0]) / p
+            };
         };
+    
+    auto forced_oscillator = [](double t, const std::vector<double>& y) {
+        double omega = 2.0;             // Собственная частота
+        double gamma = 0.1;             // Коэффициент затухания
+        double F = 1.0;                 // Амплитуда внешней силы
+        double omega_drive = 1.5;       // Частота внешней силы
+        return std::vector<double>{
+                y[1],
+                -omega * omega * y[0] - gamma * y[1] + F * std::cos(omega_drive * t)
+            };
         };
 
-    double t0 = 0.0;                              // Initial time
-    std::vector<double> y0 = { 2.0, 0.0 };        // Initial conditions: y1 = 2, y2 = 0
-    double tEnd = 20.0;                            // End time
-    double initialStep = 0.1;                     // Initial step size
-    double tolerance = 1e-4;                      // Tolerance for step size adjustment
+    double t0 = 0.0;
+    double tEnd = 20.0;
+    //std::vector<double> y0 = { 1.0, 0.0 };
+    std::vector<double> y0 = { 2.0, 0.0 };
+    double initialStep = 0.001;
+    double tolerance = 0.00001;
 
-    EulerSolver solver(vanderpol, initialStep);   // Solver instance
-    Storage storage;                              // Storage for results
+    RK2Solver solver(vanderpol, initialStep);
+    Storage storage;
 
     solver.Solve(t0, y0, tEnd, storage, tolerance);
 
-    // Output results to file (only y1 and y2)
+    // Сохранение в файл
     std::ofstream outFile("results.txt");
-    if (outFile.is_open()) {
-        for (size_t i = 0; i < storage.Size(); ++i) {
-            outFile << storage[i][0] << "\t" << storage[i][1] << std::endl;
-        }
-        outFile.close();
-        std::cout << "Results saved to 'results.txt'." << std::endl;
+    if (!outFile) {
+        std::cerr << "Failed to open file for writing\n";
+        return 1;
     }
-    else {
-        std::cerr << "Error opening file for writing!" << std::endl;
+
+    for (size_t i = 0; i < storage.Size(); ++i) {
+        const auto& values = storage[i].second;
+        outFile << values[0] << '\t' << values[1] << std::endl;
     }
+
+    outFile.close();
+    std::cout << "Results saved to results.txt\n";
 
     return 0;
 }

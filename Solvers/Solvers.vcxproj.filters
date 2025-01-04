@@ -20,6 +20,9 @@
     <ClCompile Include="Storage.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="RK2Solver.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Storage.hpp">
@@ -29,6 +32,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="EulerSolver.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="RK2Solver.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,7 @@
 #pragma once
 #include "Storage.hpp"
 #include <functional>
+#include <algorithm>
 #include <cmath>
 
 class Solver {
@@ -10,8 +11,9 @@ public:
     }
     virtual ~Solver() = default;
 
-    virtual void Step(double t, std::vector<double>& y, double h) = 0;
+    virtual void Step(double t, std::vector<double>& y, double& h, double tolerance) = 0;
     virtual void Solve(double t0, const std::vector<double>& y0, double tEnd, Storage& storage, double tolerance) = 0;
+
 
 protected:
     std::function<std::vector<double>(double, const std::vector<double>&)> f;

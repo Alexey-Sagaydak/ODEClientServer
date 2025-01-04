@@ -1,6 +1,6 @@
 #include "EulerSolver.hpp"
 
-void EulerSolver::Step(double t, std::vector<double>& y, double h) {
+void EulerSolver::Step(double t, std::vector<double>& y, double& h, double tolerance) {
     std::vector<double> dydt = f(t, y);
     for (size_t i = 0; i < y.size(); ++i) {
         y[i] += h * dydt[i];
@@ -10,13 +10,13 @@ void EulerSolver::Step(double t, std::vector<double>& y, double h) {
 void EulerSolver::Solve(double t0, const std::vector<double>& y0, double tEnd, Storage& storage, double tolerance) {
     double t = t0;
     std::vector<double> y = y0;
-    storage.Add(y);
+    storage.Add(t, y);
 
     while (t < tEnd) {
         double h = stepSize;
         std::vector<double> yTemp = y;
 
-        Step(t, yTemp, h); // Perform a single step
+        Step(t, yTemp, h, tolerance); // Perform a single step
 
         std::vector<double> fNext = f(t + h, yTemp);
         double error = 0.0;
@@ -31,7 +31,7 @@ void EulerSolver::Solve(double t0, const std::vector<double>& y0, double tEnd, S
         else {
             t += h;
             y = yTemp;
-            storage.Add(y);
+            storage.Add(t - h, y);
             if (q > 2.0) {
                 h *= 2.0;
             }

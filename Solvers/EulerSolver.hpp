@@ -7,6 +7,6 @@ public:
         : Solver(func, initialStep) {
     }
 
-    void Step(double t, std::vector<double>& y, double h) override;
+    void Step(double t, std::vector<double>& y, double& h, double tolerance) override;
     void Solve(double t0, const std::vector<double>& y0, double tEnd, Storage& storage, double tolerance) override;
 };

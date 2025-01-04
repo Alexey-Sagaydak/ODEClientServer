@@ -129,10 +129,12 @@
   <ItemGroup>
     <ClCompile Include="EulerSolver.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RK2Solver.cpp" />
     <ClCompile Include="Storage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EulerSolver.hpp" />
+    <ClInclude Include="RK2Solver.hpp" />
     <ClInclude Include="Solver.hpp" />
     <ClInclude Include="Storage.hpp" />
   </ItemGroup>
