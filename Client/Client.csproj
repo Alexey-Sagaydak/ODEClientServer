@@ -9,8 +9,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\logo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.8" />
-    <PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
+    <PackageReference Include="MaterialDesignColors" Version="5.2.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\logo.ico" />
   </ItemGroup>
 
 </Project>
