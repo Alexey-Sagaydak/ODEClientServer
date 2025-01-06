@@ -19,11 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\" />
+    <Resource Include="Resources\logo.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\logo.ico" />
+    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>

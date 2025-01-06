@@ -9,28 +9,16 @@
         mc:Ignorable="d"
         Title="Решение систем ОДУ" Height="700" Width="1100" Icon="../resources/logo.ico">
 
-    <Window.Resources>
-        <!-- Черно-белый стиль кнопок -->
-        <Style x:Key="BlackWhiteButtonStyle" TargetType="Button">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Background" Value="Black"/>
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="FontSize" Value="16"/>
-        </Style>
-    </Window.Resources>
-
-    
-    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
         
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="0.6*"/>
+            <ColumnDefinition Width="4*" MinWidth="300"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="9*" />
         </Grid.ColumnDefinitions>
 
         <Menu Grid.Row="0" Grid.ColumnSpan="3" FontSize="16" Background="WhiteSmoke" ItemContainerStyle="{StaticResource MenuItemStyle}">
@@ -47,8 +35,8 @@
                 </MenuItem>
             </MenuItem>
         </Menu>
-
-        <Grid Margin="10" Grid.Row="1">
+        
+        <Grid Margin="10" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -73,8 +61,6 @@
 
             <!-- Параметры и кнопка -->
             <StackPanel Grid.Row="2" VerticalAlignment="Top">
-                <TextBlock Text="Параметры:" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
-
                 <StackPanel Grid.Row="2" VerticalAlignment="Top">
                     <TextBlock Text="Параметры:" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
 
@@ -100,13 +86,11 @@
 
                     <!-- Кнопки -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <!-- Кнопка запуска -->
-                        <Button Width="150" Style="{StaticResource BlackWhiteButtonStyle}">
+                        <Button Width="150">
                             <materialDesign:PackIcon Kind="Play" Margin="0,0,10,0"/>
                         </Button>
 
-                        <!-- Кнопка сброса -->
-                        <Button Width="150" Style="{StaticResource BlackWhiteButtonStyle}">
+                        <Button Width="150">
                             <materialDesign:PackIcon Kind="Refresh" Margin="0,0,10,0"/>
                         </Button>
                     </StackPanel>
@@ -114,7 +98,7 @@
             </StackPanel>
         </Grid>
 
-        <GridSplitter Grid.Row="1" Grid.Column="1" ShowsPreview="False" Width="5" VerticalAlignment="Stretch" Background="Gray"/>
+        <GridSplitter Grid.Row="1" Grid.Column="1" ResizeBehavior="PreviousAndNext" ShowsPreview="False" Width="5" VerticalAlignment="Stretch" Background="Gray"/>
 
         <lvc:CartesianChart Grid.Row="1" Grid.Column="2" Series="{Binding SeriesCollection}">
             <lvc:CartesianChart.AxisX>
