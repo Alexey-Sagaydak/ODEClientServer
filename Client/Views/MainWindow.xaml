@@ -7,10 +7,11 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:Client"
         mc:Ignorable="d"
-        Title="Решение систем ОДУ" Height="700" Width="1100" Icon="../resources/logo.ico">
+        Title="Решение систем ОДУ" Height="800" Width="1200" MinWidth="500" MinHeight="200" Icon="../resources/logo.ico">
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
@@ -20,8 +21,29 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="9*" />
         </Grid.ColumnDefinitions>
-
-        <Menu Grid.Row="0" Grid.ColumnSpan="3" FontSize="16" Background="WhiteSmoke" ItemContainerStyle="{StaticResource MenuItemStyle}">
+    
+        <Menu Grid.Row="0" Grid.ColumnSpan="3" Background="#f1f1f1" FontSize="16" ItemContainerStyle="{StaticResource MenuItemStyle}">
+            <MenuItem Header="Файл" ItemContainerStyle="{StaticResource MenuItemStyle}">
+                <MenuItem Header="Сохранить как текст" Command="{Binding SaveAsTextCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ContentSaveOutline"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Сохранить как изображение" Command="{Binding SaveAsImageCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ImageOutline"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Выход" Command="{Binding ExitCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ExitToApp"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="Текст" ItemContainerStyle="{StaticResource MenuItemStyle}">
+                <MenuItem Header="Список литературы" Command="{Binding LiteratureCommand}"/>
+                <MenuItem Header="Исходный код программы" Command="{Binding ViewSourceCodeCommand}"/>
+            </MenuItem>
             <MenuItem Header="Справка" ItemContainerStyle="{StaticResource MenuItemStyle}">
                 <MenuItem Header="Вызов справки" Command="{Binding HelpCommand}">
                     <MenuItem.Icon>
@@ -35,79 +57,135 @@
                 </MenuItem>
             </MenuItem>
         </Menu>
+        <ToolBarTray Grid.Row="1" Grid.ColumnSpan="3" Background="#f1f1f1">
+            <ToolBar Padding="2">
+                <Button Padding="5" Command="{Binding SaveAsTextCommand}">
+                    <Button.ToolTip>
+                        <ToolTip Content="Сохранить текстом" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="ContentSaveOutline" />
+                </Button>
+                <Button Padding="5" Command="{Binding SaveAsImageCommand}">
+                    <Button.ToolTip>
+                        <ToolTip Content="Сохранить изображением" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="ImageOutline" />
+                </Button>
+                <Separator/>
+                <TextBlock Text="X:" FontSize="16" FontWeight="Bold" Padding="5"></TextBlock>
+                <ComboBox x:Name="FirstDependencySelector" Padding="5" FontSize="16"/>
+                <TextBlock Text="Y:" FontSize="16" FontWeight="Bold" Padding="5"/>
+                <ComboBox x:Name="SecondDependencySelector" Padding="5" FontSize="16"/>
+                <Separator/>
+                <Button Padding="5" Command="{Binding ZoomInCommand}">
+                    <Button.ToolTip>
+                        <ToolTip Content="Увеличить масштаб" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="ZoomInOutline" />
+                </Button>
+                <Button Padding="5" Command="{Binding ZoomOutCommand}">
+                    <Button.ToolTip>
+                        <ToolTip Content="Уменьшить масштаб" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="ZoomOutOutline" />
+                </Button>
+                <Separator/>
+                <Button Padding="5" Command="{Binding ResetZoomCommand}">
+                    <Button.ToolTip>
+                        <ToolTip Content="Сбросить масштаб" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="HomeOutline" />
+                </Button>
+                <Button Padding="5" Command="{Binding DeleteChartsCommand}">
+                    <Button.ToolTip>
+                        <ToolTip Content="Очистить графики" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="GarbageCanOutline" />
+                </Button>
+                <Separator/>
+                <Button Padding="5" Command="{Binding HelpCommand}">
+                    <Button.ToolTip>
+                        <ToolTip Content="Вызов справки" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="QuestionMarkCircleOutline" />
+                </Button>
+                <Button Padding="5" Command="{Binding AboutCommand}">
+                    <Button.ToolTip>
+                        <ToolTip Content="О программе" />
+                    </Button.ToolTip>
+                    <materialDesign:PackIcon Kind="AboutCircleOutline" />
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
         
-        <Grid Margin="10" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch">
+        <DockPanel Margin="10" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Button DockPanel.Dock="Bottom" Content="Вычислить" FontSize="16" Margin="0,5,0,0" VerticalAlignment="Bottom"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Система ОДУ" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="EquationSelector" Margin="5,0,0,10"
+                            SelectionChanged="EquationSelector_SelectionChanged"
+                            FontSize="16" Padding="5">
+                        <ComboBoxItem>Уравнение Ван дер Поля</ComboBoxItem>
+                        <ComboBoxItem>Принужденный осциллятор</ComboBoxItem>
+                        <ComboBoxItem>Система Робертсона</ComboBoxItem>
+                    </ComboBox>
+                    <Border BorderBrush="Gray" BorderThickness="1" Padding="5" Margin="5,0,0,5">
+                        <TextBlock x:Name="EquationFormula" Text="Выберите уравнение"
+                                TextWrapping="Wrap" FontSize="16"
+                                VerticalAlignment="Center" HorizontalAlignment="Left"
+                                TextAlignment="Left" FontWeight="Light"/>
+                    </Border>
+                    <TextBlock Text="Параметры" FontSize="16" FontWeight="Bold" Margin="0,5,0,5"/>
+                    <StackPanel x:Name="ParametersPanel" Margin="0,0,0,5"/>
+                    <TextBlock Text="Метод решения" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <TextBlock Text="Алгоритмы с контролем точности:" TextWrapping="Wrap" FontSize="16" Margin="0,5,0,5"/>
+                    <RadioButton Content="Явный метод Эйлера" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
+                    <RadioButton Content="Метод Рунге-Кутты 2-го порядка" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
+                    <TextBlock Text="Алгоритмы с контролем устойчивости:" TextWrapping="Wrap" FontSize="16" Margin="0,5,0,5"/>
+                    <RadioButton Content="RK23S" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
+                    <RadioButton Content="STEKS" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
+                    <TextBlock Text="Алгоритмы переменного порядка и шага:" TextWrapping="Wrap" FontSize="16" Margin="0,5,0,5"/>
+                    <RadioButton Content="DISPD" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
+                    <RadioButton Content="DISPF" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
+                </StackPanel>
+            </ScrollViewer>
+        </DockPanel>
+
+        <GridSplitter Grid.Row="2" Grid.Column="1" ResizeBehavior="PreviousAndNext" ShowsPreview="False" Width="5" VerticalAlignment="Stretch" Background="Gray"/>
+
+        <Grid Grid.Row="2" Grid.Column="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <ComboBox x:Name="EquationSelector" Margin="0,0,0,20"
-                  SelectionChanged="EquationSelector_SelectionChanged"
-                  FontSize="16" Padding="10">
-                <ComboBoxItem>Уравнение Ван дер Поля</ComboBoxItem>
-                <ComboBoxItem>Принужденный осциллятор</ComboBoxItem>
-                <ComboBoxItem>Система Робертсона</ComboBoxItem>
-            </ComboBox>
-
-            <!-- Формула -->
-            <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" Padding="10" Margin="0,0,0,20">
-                <TextBlock x:Name="EquationFormula" Text="Выберите уравнение"
-                       TextWrapping="Wrap" FontSize="16"
-                       VerticalAlignment="Center" HorizontalAlignment="Center"
-                       TextAlignment="Center" FontWeight="Bold"/>
-            </Border>
-
-            <!-- Параметры и кнопка -->
-            <StackPanel Grid.Row="2" VerticalAlignment="Top">
-                <StackPanel Grid.Row="2" VerticalAlignment="Top">
-                    <TextBlock Text="Параметры:" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
-
-                    <!-- Поля параметров -->
-                    <StackPanel x:Name="ParametersPanel" Margin="0,0,0,20">
-                        <!-- Параметры добавляются динамически -->
-                    </StackPanel>
-
-                    <!-- Комбобоксы для зависимости переменных -->
-                    <StackPanel>
-                        <!-- Первый комбобокс для выбора зависимой переменной -->
-                        <ComboBox x:Name="FirstDependencySelector" Margin="0,0,0,10"
-                          FontSize="16" Padding="10">
-                            <!-- Будет заполняться динамически -->
-                        </ComboBox>
-
-                        <!-- Второй комбобокс для выбора еще одной зависимой переменной -->
-                        <ComboBox x:Name="SecondDependencySelector" Margin="0,0,0,20"
-                          FontSize="16" Padding="10">
-                            <!-- Будет заполняться динамически -->
-                        </ComboBox>
-                    </StackPanel>
-
-                    <!-- Кнопки -->
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button Width="150">
-                            <materialDesign:PackIcon Kind="Play" Margin="0,0,10,0"/>
-                        </Button>
-
-                        <Button Width="150">
-                            <materialDesign:PackIcon Kind="Refresh" Margin="0,0,10,0"/>
-                        </Button>
-                    </StackPanel>
-                </StackPanel>
+            <!-- Поля для ввода границ -->
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="5">
+                <TextBlock Text="X Min:" VerticalAlignment="Center" Margin="5"/>
+                <TextBox Width="50" Text="{Binding XMin, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                <TextBlock Text="X Max:" VerticalAlignment="Center" Margin="5"/>
+                <TextBox Width="50" Text="{Binding XMax, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                <TextBlock Text="Y Min:" VerticalAlignment="Center" Margin="5"/>
+                <TextBox Width="50" Text="{Binding YMin, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                <TextBlock Text="Y Max:" VerticalAlignment="Center" Margin="5"/>
+                <TextBox Width="50" Text="{Binding YMax, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                <Button Content="Применить" Command="{Binding ApplyAxisLimitsCommand}" Margin="5"/>
             </StackPanel>
+
+            <!-- График -->
+            <lvc:CartesianChart x:Name="Chart" Grid.Row="1" Series="{Binding SeriesCollection}" 
+                        Zoom="Xy" Pan="Xy" DisableAnimations="True" Margin="5">
+                <lvc:CartesianChart.AxisX>
+                    <lvc:Axis Title="X Axis" Labels="{Binding Labels}" MinValue="{Binding XMin}" MaxValue="{Binding XMax}"/>
+                </lvc:CartesianChart.AxisX>
+                <lvc:CartesianChart.AxisY>
+                    <lvc:Axis Title="Y Axis" LabelFormatter="{Binding YFormatter}" MinValue="{Binding YMin}" MaxValue="{Binding YMax}"/>
+                </lvc:CartesianChart.AxisY>
+            </lvc:CartesianChart>
         </Grid>
-
-        <GridSplitter Grid.Row="1" Grid.Column="1" ResizeBehavior="PreviousAndNext" ShowsPreview="False" Width="5" VerticalAlignment="Stretch" Background="Gray"/>
-
-        <lvc:CartesianChart Grid.Row="1" Grid.Column="2" Series="{Binding SeriesCollection}">
-            <lvc:CartesianChart.AxisX>
-                <lvc:Axis Title="X Axis"
-                          Labels="{Binding Labels}" />
-            </lvc:CartesianChart.AxisX>
-            <lvc:CartesianChart.AxisY>
-                <lvc:Axis Title="Y Axis" />
-            </lvc:CartesianChart.AxisY>
-        </lvc:CartesianChart>
     </Grid>
 </Window>

@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using LiveCharts.Wpf;
+using LiveCharts;
+using System.Reflection.Emit;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,14 +19,35 @@ namespace Client;
 /// </summary>
 public partial class MainWindow : Window
 {
+    public SeriesCollection SeriesCollection { get; private set; }
+    public string[] Labels { get; set; }
+    public Func<double, string> YFormatter { get; set; }
+
     public MainWindow()
     {
         InitializeComponent();
 
-        MainWindowViewModel viewModel = new();
+        MainWindowViewModel viewModel = new(Chart);
         DataContext = viewModel;
+        viewModel.RequestClose += (sender, e) => Close();
 
         EquationSelector.SelectedIndex = 0;
+        SetInitialZoom();
+    }
+
+    private void SetInitialZoom()
+    {
+        foreach (var axis in Chart.AxisX)
+        {
+            axis.MinValue = 0;
+            axis.MaxValue = 10;
+        }
+
+        foreach (var axis in Chart.AxisY)
+        {
+            axis.MinValue = 0;
+            axis.MaxValue = 10;
+        }
     }
 
     private void EquationSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -39,32 +63,32 @@ public partial class MainWindow : Window
             case "Уравнение Ван дер Поля":
                 EquationFormula.Text = "y₀' = y₁\n"
                                      + "y₁' = (μ (1 - y₀²) y₁ - y₀) / p";
-                AddParameterField("μ", "6.0");
-                AddParameterField("p", "1.0");
-                AddParameterField("Нач. условие y₀", "2.0");
-                AddParameterField("Нач. условие y₁", "0.0");
+                AddParameterField("μ", 6.0m);
+                AddParameterField("p", 1.0m);
+                AddParameterField("н.у. y₀", 2.0m);
+                AddParameterField("н.у. y₁", 0.0m);
                 ConfigureDependencySelectors("y₀", "y₁", "t");
                 break;
 
             case "Принужденный осциллятор":
                 EquationFormula.Text = "y₀' = y₁\n"
                                      + "y₁' = -ω²y₀ - γy₁ + F cos(ωₖ t)";
-                AddParameterField("ω", "2.0");
-                AddParameterField("γ", "0.1");
-                AddParameterField("F", "1.0");
-                AddParameterField("ωₖ", "1.5");
-                AddParameterField("Нач. условие y₀", "1.0");
-                AddParameterField("Нач. условие y₁", "0.0");
+                AddParameterField("ω", 2.0m);
+                AddParameterField("γ", 0.1m);
+                AddParameterField("F", 1.0m);
+                AddParameterField("ωₖ", 1.5m);
+                AddParameterField("н.у. y₀", 1.0m);
+                AddParameterField("н.у. y₁", 0.0m);
                 ConfigureDependencySelectors("y₀", "y₁", "t");
                 break;
 
             case "Система Робертсона":
-                EquationFormula.Text = "y₁' = -0.04y₁ + 10⁴y₂y₃\n"
-                                     + "y₂' = 0.04y₁ - 10⁴y₂y₃ - 3×10⁷y₂²\n"
-                                     + "y₃' = 3×10⁷y₂²";
-                AddParameterField("Нач. условие y₁", "1.0");
-                AddParameterField("Нач. условие y₂", "0.0");
-                AddParameterField("Нач. условие y₃", "0.0");
+                EquationFormula.Text = "y₀' = -0.04y₀ + 10⁴y₁y₂\n"
+                                     + "y₁' = 0.04y₀ - 10⁴y₁y₂ - 3×10⁷y₁²\n"
+                                     + "y₂' = 3×10⁷y₁²";
+                AddParameterField("н.у. y₀", 1.0m);
+                AddParameterField("н.у. y₁", 0.0m);
+                AddParameterField("н.у. y₂", 0.0m);
                 ConfigureDependencySelectors("y₀", "y₁", "y₂", "t");
                 break;
 
@@ -74,11 +98,31 @@ public partial class MainWindow : Window
         }
     }
 
-    private void AddParameterField(string name, string defaultValue)
+    private void AddParameterField(string name, decimal defaultValue)
     {
-        StackPanel parameterField = new StackPanel { Orientation = Orientation.Horizontal };
-        parameterField.Children.Add(new TextBlock { Text = $"{name}: ", Width = 100 });
-        parameterField.Children.Add(new TextBox { Text = defaultValue, Width = 150 });
+        StackPanel parameterField = new StackPanel {
+            Orientation = Orientation.Horizontal,
+            Margin = new Thickness
+            {
+                Left = 5,
+                Right = 0,
+                Top = 0,
+                Bottom = 5,
+            }
+        };
+        parameterField.Children.Add(new TextBlock { Text = $"{name}: ", Width = 70, FontSize = 16 });
+        parameterField.Children.Add(new MaterialDesignThemes.Wpf.DecimalUpDown
+            {
+                Value = defaultValue,
+                ValueStep = 0.1m,
+                Minimum = -50,
+                Maximum = 50,
+                Width = 150,
+                FontSize = 16,
+                Margin = new Thickness(5),
+                ToolTip = "Выберите значение"
+            }
+        );
         ParametersPanel.Children.Add(parameterField);
     }
 
