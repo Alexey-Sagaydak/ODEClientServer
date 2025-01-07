@@ -5,7 +5,7 @@
         ResizeMode="NoResize" 
         SizeToContent="WidthAndHeight" 
         WindowStartupLocation="CenterScreen"
-        Width="600" Height="450" MaxWidth="600" MaxHeight="450" Icon="../resources/logo.ico">
+        Width="600" Height="360" MaxWidth="600" MaxHeight="450" Icon="../resources/logo.ico">
     
     <Grid Margin="0" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
@@ -16,28 +16,28 @@
         <Image Source="../resources/logo.png" 
                HorizontalAlignment="Center" 
                Stretch="Uniform" 
-               Margin="0,15,0,5" Width="350" />
+               Margin="0,20,0,20" Width="350" />
 
-        <StackPanel Grid.Row="1" Margin="15 5 15 0">
+        <StackPanel Grid.Row="1" Margin="20 0 20 0">
             <TextBlock Text="Выпускная квалификационная работа бакалавра" 
                        FontWeight="Bold" 
-                       FontSize="16" 
+                       FontSize="18" 
                        TextAlignment="Center" 
-                       Margin="0,0,0,5" />
+                       Margin="0,0,0,20" />
 
             <TextBlock Text="Автоматизация построения алгоритмов интегрирования на основе явных численных схем с согласованными областями устойчивости" 
                        TextWrapping="Wrap" 
                        HorizontalAlignment="Center" TextAlignment="Center"
                        FontSize="16" 
-                       Margin="0,0,0,15" FontStyle="Italic" />
+                       Margin="0,0,0,20" FontStyle="Italic" />
 
-            <Grid>
+            <Grid Margin="0 0 0 20">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="6*"/>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="6*"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <StackPanel Grid.Column="0">
                     <TextBlock Text="Автор: " FontSize="16" FontWeight="Bold" TextWrapping="Wrap" />
                     <TextBlock Text="студент гр. АВТ-113&#10;Сагайдак Алексей Евгеньевич" FontSize="16" Margin="0,0,0,5" />
@@ -47,18 +47,13 @@
                     <TextBlock Text="к.т.н., доцент&#10;Достовалов Дмитрий Николаевич" FontSize="16" Margin="0,0,0,5" />
                 </StackPanel>
             </Grid>
-            
-            <TextBlock Text="Версия программы: 1.0.0" 
-                       FontSize="16" 
-                       FontWeight="Bold" 
-                       HorizontalAlignment="Center"
-                       Margin="0,5,0,5" />
 
-            <TextBlock Text="Год: 2025" 
+            <TextBlock Text="v1.0.0&#10;2025" 
                        FontSize="16" 
                        FontWeight="Bold"
+                       TextAlignment="Center"
                        HorizontalAlignment="Center"
-                       Margin="0,0,0,10" />
+                       Margin="0,0,0,15" />
         </StackPanel>
     </Grid>
 </Window>

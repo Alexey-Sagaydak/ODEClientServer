@@ -286,6 +286,8 @@ public class MainWindowViewModel : ViewModelBase
 
     public void UpdateScale()
     {
+        bool flag = false;
+
         double globalXMin = double.MaxValue;
         double globalXMax = double.MinValue;
         double globalYMin = double.MaxValue;
@@ -297,6 +299,7 @@ public class MainWindowViewModel : ViewModelBase
             {
                 foreach (var point in values)
                 {
+                    flag = true;
                     globalXMin = Math.Min(globalXMin, point.X);
                     globalXMax = Math.Max(globalXMax, point.X);
                     globalYMin = Math.Min(globalYMin, point.Y);
@@ -305,6 +308,8 @@ public class MainWindowViewModel : ViewModelBase
             }
         }
 
+        if (!flag) return;
+        
         double xPadding = (globalXMax - globalXMin) * 0.1;
         double yPadding = (globalYMax - globalYMin) * 0.1;
 

@@ -41,7 +41,6 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Текст" ItemContainerStyle="{StaticResource MenuItemStyle}">
-                <MenuItem Header="Список литературы" Command="{Binding LiteratureCommand}"/>
                 <MenuItem Header="Исходный код программы" Command="{Binding ViewSourceCodeCommand}"/>
             </MenuItem>
             <MenuItem Header="Справка" ItemContainerStyle="{StaticResource MenuItemStyle}">
@@ -149,7 +148,7 @@
                     <StackPanel x:Name="ParametersPanel" Margin="0,0,0,5"/>
                     <TextBlock Text="Метод решения" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
                     <TextBlock Text="Алгоритмы с контролем точности:" TextWrapping="Wrap" FontSize="16" Margin="0,5,0,5"/>
-                    <RadioButton Content="Явный метод Эйлера" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
+                    <RadioButton Content="Явный метод Эйлера" IsChecked="True" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
                     <RadioButton Content="Метод Рунге-Кутты 2-го порядка" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
                     <TextBlock Text="Алгоритмы с контролем устойчивости:" TextWrapping="Wrap" FontSize="16" Margin="0,5,0,5"/>
                     <RadioButton Content="RK23S" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
@@ -175,10 +174,10 @@
             <lvc:CartesianChart x:Name="Chart" Grid.Row="1" Series="{Binding SeriesCollection}" 
                         Zoom="Xy" Pan="Xy" LegendLocation="Bottom" DataTooltip="{x:Null}" DisableAnimations="True" Margin="5">
                 <lvc:CartesianChart.AxisX>
-                    <lvc:Axis Title="X Axis" Labels="{Binding Labels}" MinValue="{Binding XMin, Mode=TwoWay, Delay=250}" MaxValue="{Binding XMax, Mode=TwoWay, Delay=250}"/>
+                    <lvc:Axis Title="Ось X" Labels="{Binding Labels}" MinValue="{Binding XMin, Mode=TwoWay, Delay=250}" MaxValue="{Binding XMax, Mode=TwoWay, Delay=250}"/>
                 </lvc:CartesianChart.AxisX>
                 <lvc:CartesianChart.AxisY>
-                    <lvc:Axis Title="Y Axis" LabelFormatter="{Binding YFormatter}" MinValue="{Binding YMin, Mode=TwoWay, Delay=250}" MaxValue="{Binding YMax, Mode=TwoWay, Delay=250}"/>
+                    <lvc:Axis Title="Ось Y" LabelFormatter="{Binding YFormatter}" MinValue="{Binding YMin, Mode=TwoWay, Delay=250}" MaxValue="{Binding YMax, Mode=TwoWay, Delay=250}"/>
                 </lvc:CartesianChart.AxisY>
             </lvc:CartesianChart>
         </Grid>
