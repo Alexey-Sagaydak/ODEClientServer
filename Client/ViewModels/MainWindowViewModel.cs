@@ -34,6 +34,7 @@ public class MainWindowViewModel : ViewModelBase
     private RelayCommand _helpCommand;
     private RelayCommand _saveAsImageCommand;
     private RelayCommand _deleteChartsCommand;
+    private RelayCommand _aboutCommand;
 
     private ChartManager chartManager;
 
@@ -182,6 +183,17 @@ public class MainWindowViewModel : ViewModelBase
     public RelayCommand ResetZoomCommand
     {
         get => _resetZoomCommand ??= new RelayCommand(_ => UpdateScale());
+    }
+
+    public RelayCommand AboutCommand
+    {
+        get => _aboutCommand ??= new RelayCommand(OpenAboutWindow);
+    }
+
+    private void OpenAboutWindow(object obj)
+    {
+        var aboutWindow = new AboutWindow();
+        aboutWindow.ShowDialog();
     }
 
     private void Zoom(double factor)
