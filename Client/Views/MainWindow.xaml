@@ -127,19 +127,22 @@
         </ToolBarTray>
         
         <DockPanel Margin="10" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Button DockPanel.Dock="Bottom" Content="Вычислить" FontSize="16" Margin="0,5,0,0" VerticalAlignment="Bottom"/>
+            <Button DockPanel.Dock="Bottom" Content="Вычислить" FontSize="16" Margin="0,5,0,0" Command="{Binding SolveODE}" VerticalAlignment="Bottom"/>
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <TextBlock Text="Система ОДУ" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="EquationSelector" Margin="5,0,0,10"
-                            SelectionChanged="EquationSelector_SelectionChanged"
-                            FontSize="16" Padding="5">
+                    <ComboBox x:Name="EquationSelector"
+                              Margin="5,0,0,10"
+                              FontSize="16"
+                              Padding="5"
+                              SelectionChanged="EquationSelector_SelectionChanged"
+                              SelectedItem="{Binding SelectedEquationString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <ComboBoxItem>Уравнение Ван дер Поля</ComboBoxItem>
                         <ComboBoxItem>Принужденный осциллятор</ComboBoxItem>
                         <ComboBoxItem>Система Робертсона</ComboBoxItem>
                     </ComboBox>
                     <Border BorderBrush="Gray" BorderThickness="1" Padding="5" Margin="5,0,0,5">
-                        <TextBlock x:Name="EquationFormula" Text="Выберите уравнение"
+                        <TextBlock x:Name="EquationFormula" Text="{Binding EquationFormula}"
                                 TextWrapping="Wrap" FontSize="16"
                                 VerticalAlignment="Center" HorizontalAlignment="Left"
                                 TextAlignment="Left" FontWeight="Light"/>
@@ -148,14 +151,38 @@
                     <StackPanel x:Name="ParametersPanel" Margin="0,0,0,5"/>
                     <TextBlock Text="Метод решения" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
                     <TextBlock Text="Алгоритмы с контролем точности:" TextWrapping="Wrap" FontSize="16" Margin="0,5,0,5"/>
-                    <RadioButton Content="Явный метод Эйлера" IsChecked="True" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
-                    <RadioButton Content="Метод Рунге-Кутты 2-го порядка" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
+                    <RadioButton x:Name="FirstRB" Content="Явный метод Эйлера" 
+                                 Tag="ExplicitEuler" 
+                                 GroupName="Methods" 
+                                 Checked="RadioButton_Checked"
+                                 FontSize="16" Margin="5 0 0 5"/>
+                    <RadioButton Content="Метод Рунге-Кутты 2-го порядка" 
+                                 Tag="RungeKutta2" 
+                                 GroupName="Methods" 
+                                 Checked="RadioButton_Checked"
+                                 FontSize="16" Margin="5 0 0 5"/>
                     <TextBlock Text="Алгоритмы с контролем устойчивости:" TextWrapping="Wrap" FontSize="16" Margin="0,5,0,5"/>
-                    <RadioButton Content="RK23S" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
-                    <RadioButton Content="STEKS" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
+                    <RadioButton Content="RK23S" 
+                                 Tag="RK23S" 
+                                 GroupName="Methods" 
+                                 Checked="RadioButton_Checked"
+                                 FontSize="16" Margin="5 0 0 5"/>
+                    <RadioButton Content="STEKS" 
+                                 Tag="STEKS" 
+                                 GroupName="Methods"
+                                 Checked="RadioButton_Checked"
+                                 FontSize="16" Margin="5 0 0 5"/>
                     <TextBlock Text="Алгоритмы переменного порядка и шага:" TextWrapping="Wrap" FontSize="16" Margin="0,5,0,5"/>
-                    <RadioButton Content="DISPD" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
-                    <RadioButton Content="DISPF" GroupName="Methods" FontSize="16" Margin="5 0 0 5"/>
+                    <RadioButton Content="DISPD" 
+                                 Tag="DISPD" 
+                                 Checked="RadioButton_Checked"
+                                 GroupName="Methods" 
+                                 FontSize="16" Margin="5 0 0 5"/>
+                    <RadioButton Content="DISPF" 
+                                 Tag="DISPF"
+                                 Checked="RadioButton_Checked"
+                                 GroupName="Methods" 
+                                 FontSize="16" Margin="5 0 0 5"/>   
                 </StackPanel>
             </ScrollViewer>
         </DockPanel>

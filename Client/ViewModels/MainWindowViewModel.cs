@@ -23,6 +23,14 @@ public class MainWindowViewModel : ViewModelBase
     private double _yMin;
     private double _yMax;
 
+    private string _selectedMethodString;
+    private SolutionMethod _selectedMethod;
+
+    private string _selectedEquationString;
+    private EquationType _selectedEquation;
+
+    private string _equationFormula;
+
     private const string _sourceCode = @"https://github.com/Alexey-Sagaydak/ODEClientServer";
     private const string _documentation = @"https://github.com/Alexey-Sagaydak/ODEClientServer/blob/master/README.md";
 
@@ -35,6 +43,7 @@ public class MainWindowViewModel : ViewModelBase
     private RelayCommand _saveAsImageCommand;
     private RelayCommand _deleteChartsCommand;
     private RelayCommand _aboutCommand;
+    private RelayCommand _solveODE;
 
     private ChartManager chartManager;
 
@@ -42,6 +51,84 @@ public class MainWindowViewModel : ViewModelBase
 
     public CartesianChart Chart { get; set; }
     public event EventHandler RequestClose;
+
+    public MainWindowViewModel(CartesianChart chart)
+    {
+        Chart = chart;
+        chartManager = new(Chart);
+        XMin = 0;
+        XMax = 10;
+        YMin = 0;
+        YMax = 10;
+        SelectedEquationString = EquationMapper.GetEquationString(EquationType.VanDerPol);
+
+        DrawTestGraph();
+    }
+
+    public string SelectedMethodString
+    {
+        get => _selectedMethodString;
+        set
+        {
+            if (_selectedMethodString != value)
+            {
+                _selectedMethodString = value;
+                UpdateSolverEnumField(value);
+            }
+        }
+    }
+
+    public string EquationFormula
+    {
+        get => _equationFormula;
+        set
+        {
+            if (_equationFormula != value)
+            {
+                _equationFormula = value;
+                OnPropertyChanged(nameof(EquationFormula));
+            }
+        }
+    }
+
+    public SolutionMethod SelectedMethod
+    {
+        get => _selectedMethod;
+        private set
+        {
+            if (_selectedMethod != value)
+            {
+                _selectedMethod = value;
+            }
+        }
+    }
+
+    public string SelectedEquationString
+    {
+        get => _selectedEquationString;
+        set
+        {
+            if (_selectedEquationString != value)
+            {
+                _selectedEquationString = value;
+                UpdateEqEnumField(value);
+                OnPropertyChanged(nameof(SelectedEquationString));
+            }
+        }
+    }
+
+    public EquationType SelectedEquation
+    {
+        get => _selectedEquation;
+        private set
+        {
+            if (_selectedEquation != value)
+            {
+                _selectedEquation = value;
+                UpdateEquationFormula();
+            }
+        }
+    }
 
     public double XMin
     {
@@ -95,21 +182,34 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    public MainWindowViewModel(CartesianChart chart)
+    private void UpdateEquationFormula()
     {
-        Chart = chart;
-        chartManager = new(Chart);
-        XMin = 0;
-        XMax = 10;
-        YMin = 0;
-        YMax = 10;
+        switch (SelectedEquation)
+        {
+            case EquationType.VanDerPol:
+                EquationFormula = "y₀' = y₁\n"
+                                + "y₁' = (μ (1 - y₀²) y₁ - y₀) / p";
+                break;
 
-        DrawTestGraph();
+            case EquationType.ForcedOscillator:
+                EquationFormula = "y₀' = y₁\n"
+                                + "y₁' = -ω²y₀ - γy₁ + F cos(ωₖ t)";
+                break;
+
+            case EquationType.RobertsonSystem:
+                EquationFormula = "y₀' = -0.04y₀ + 10⁴y₁y₂\n"
+                                + "y₁' = 0.04y₀ - 10⁴y₁y₂ - 3×10⁷y₁²\n"
+                                + "y₂' = 3×10⁷y₁²";
+                break;
+
+            default:
+                EquationFormula = "Выберите уравнение";
+                break;
+        }
     }
 
     private void DrawTestGraph()
     {
-        // Первый график
         var dataPoints1 = new List<Point>
         {
             new Point(0, 1),
@@ -120,7 +220,6 @@ public class MainWindowViewModel : ViewModelBase
         };
         chartManager.AddChart("Linear Growth", dataPoints1);
 
-        // Второй график
         var dataPoints2 = new List<Point>
         {
             new Point(0, 1),
@@ -131,7 +230,6 @@ public class MainWindowViewModel : ViewModelBase
         };
         chartManager.AddChart("Factorial Growth", dataPoints2);
 
-        // Третий график
         var dataPoints3 = new List<Point>
         {
             new Point(0, 1),
@@ -153,6 +251,11 @@ public class MainWindowViewModel : ViewModelBase
     public RelayCommand DeleteChartsCommand
     {
         get => _deleteChartsCommand ??= new RelayCommand(_ => chartManager.ClearCharts());
+    }
+    
+    public RelayCommand SolveODE
+    {
+        get => _solveODE ??= new RelayCommand(_ => Solve());
     }
 
     public RelayCommand ExitCommand
@@ -188,6 +291,12 @@ public class MainWindowViewModel : ViewModelBase
     public RelayCommand AboutCommand
     {
         get => _aboutCommand ??= new RelayCommand(OpenAboutWindow);
+    }
+
+    private void Solve()
+    {
+        Console.WriteLine(SelectedMethod.ToString());
+        Console.WriteLine(SelectedEquation.ToString());
     }
 
     private void OpenAboutWindow(object obj)
@@ -327,6 +436,19 @@ public class MainWindowViewModel : ViewModelBase
 
         ApplyAxisLimits();
         Chart.Update(true, true);
+    }
+
+    private void UpdateSolverEnumField(string method)
+    {
+        if (Enum.TryParse(method, out SolutionMethod parsedMethod))
+        {
+            SelectedMethod = parsedMethod;
+        }
+    }
+
+    private void UpdateEqEnumField(string equation)
+    {
+        SelectedEquation = EquationMapper.GetEquationEnum(equation);
     }
 
     public void Exit(object obj = null)
