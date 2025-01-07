@@ -11,11 +11,18 @@ using System.Windows.Media.Imaging;
 using System.Windows;
 using LiveCharts.Wpf.Charts.Base;
 using System.Windows.Media;
+using LiveCharts;
+using LiveCharts.Defaults;
 
 namespace Client;
 
-public class MainWindowViewModel
+public class MainWindowViewModel : ViewModelBase
 {
+    private double _xMin;
+    private double _xMax;
+    private double _yMin;
+    private double _yMax;
+
     private const string _sourceCode = @"https://github.com/Alexey-Sagaydak/ODEClientServer";
     private const string _documentation = @"https://github.com/Alexey-Sagaydak/ODEClientServer/blob/master/README.md";
 
@@ -35,33 +42,106 @@ public class MainWindowViewModel
     public CartesianChart Chart { get; set; }
     public event EventHandler RequestClose;
 
+    public double XMin
+    {
+        get => _xMin;
+        set
+        {
+            if (_xMin != value)
+            {
+                _xMin = value;
+                OnPropertyChanged(nameof(XMin));
+            }
+        }
+    }
+
+    public double XMax
+    {
+        get => _xMax;
+        set
+        {
+            if (_xMax != value)
+            {
+                _xMax = value;
+                OnPropertyChanged(nameof(XMax));
+            }
+        }
+    }
+
+    public double YMin
+    {
+        get => _yMin;
+        set
+        {
+            if (_yMin != value)
+            {
+                _yMin = value;
+                OnPropertyChanged(nameof(YMin));
+            }
+        }
+    }
+
+    public double YMax
+    {
+        get => _yMax;
+        set
+        {
+            if (_yMax != value)
+            {
+                _yMax = value;
+                OnPropertyChanged(nameof(YMax));
+            }
+        }
+    }
+
     public MainWindowViewModel(CartesianChart chart)
     {
         Chart = chart;
         chartManager = new(Chart);
+        XMin = 0;
+        XMax = 10;
+        YMin = 0;
+        YMax = 10;
 
         DrawTestGraph();
     }
 
     private void DrawTestGraph()
     {
-        List<Point> dataPoints = new List<Point>
+        // Первый график
+        var dataPoints1 = new List<Point>
         {
-            new Point(-4, 16),
-            new Point(-3, 9),
-            new Point(-2, 4),
-            new Point(-1, 2),
             new Point(0, 1),
             new Point(1, 2),
-            new Point(2, 4),
-            new Point(3, 9),
-            new Point(4, 16),
+            new Point(2, 3),
+            new Point(3, 4),
+            new Point(4, 5)
         };
+        chartManager.AddChart("Linear Growth", dataPoints1);
 
-        string graphTitle = "x^2";
+        // Второй график
+        var dataPoints2 = new List<Point>
+        {
+            new Point(0, 1),
+            new Point(1, 1),
+            new Point(2, 2),
+            new Point(3, 6),
+            new Point(4, 24)
+        };
+        chartManager.AddChart("Factorial Growth", dataPoints2);
 
-        chartManager.AddChart(graphTitle, dataPoints);
-        chartManager.UpdateScale();
+        // Третий график
+        var dataPoints3 = new List<Point>
+        {
+            new Point(0, 1),
+            new Point(1, 0.5),
+            new Point(2, 0.25),
+            new Point(3, 0.125),
+            new Point(4, 0.0625)
+        };
+        chartManager.AddChart("Exponential Decay", dataPoints3);
+
+        UpdateScale();
     }
 
     public RelayCommand SaveAsImageCommand
@@ -101,7 +181,7 @@ public class MainWindowViewModel
 
     public RelayCommand ResetZoomCommand
     {
-        get => _resetZoomCommand ??= new RelayCommand(_ => chartManager.UpdateScale());
+        get => _resetZoomCommand ??= new RelayCommand(_ => UpdateScale());
     }
 
     private void Zoom(double factor)
@@ -170,6 +250,66 @@ public class MainWindowViewModel
         {
             MessageBox.Show($"Ошибка при сохранении изображения: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+    }
+
+    private void ApplyAxisLimits()
+    {
+        OnPropertyChanged(nameof(XMin));
+        OnPropertyChanged(nameof(XMax));
+        OnPropertyChanged(nameof(YMin));
+        OnPropertyChanged(nameof(YMax));
+
+        foreach (var axis in Chart.AxisX)
+        {
+            axis.MinValue = XMin;
+            axis.MaxValue = XMax;
+        }
+
+        foreach (var axis in Chart.AxisY)
+        {
+            axis.MinValue = YMin;
+            axis.MaxValue = YMax;
+        }
+    }
+
+    public void UpdateScale()
+    {
+        double globalXMin = double.MaxValue;
+        double globalXMax = double.MinValue;
+        double globalYMin = double.MaxValue;
+        double globalYMax = double.MinValue;
+
+        foreach (var series in Chart.Series)
+        {
+            if (series is LineSeries lineSeries && lineSeries.Values is ChartValues<ObservablePoint> values)
+            {
+                foreach (var point in values)
+                {
+                    globalXMin = Math.Min(globalXMin, point.X);
+                    globalXMax = Math.Max(globalXMax, point.X);
+                    globalYMin = Math.Min(globalYMin, point.Y);
+                    globalYMax = Math.Max(globalYMax, point.Y);
+                }
+            }
+        }
+
+        double xPadding = (globalXMax - globalXMin) * 0.1;
+        double yPadding = (globalYMax - globalYMin) * 0.1;
+
+        foreach (var axis in Chart.AxisX)
+        {
+            XMin = globalXMin - xPadding;
+            XMax = globalXMax + xPadding;
+        }
+
+        foreach (var axis in Chart.AxisY)
+        {
+            YMin = globalYMin - yPadding;
+            YMax = globalYMax + yPadding;
+        }
+
+        ApplyAxisLimits();
+        Chart.Update(true, true);
     }
 
     public void Exit(object obj = null)

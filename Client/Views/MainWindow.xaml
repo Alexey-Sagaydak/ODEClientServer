@@ -103,6 +103,15 @@
                     <materialDesign:PackIcon Kind="GarbageCanOutline" />
                 </Button>
                 <Separator/>
+                <TextBlock Text="Xmin:" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
+                <TextBox Width="50" FontSize="16" Text="{Binding XMin, UpdateSourceTrigger=LostFocus, Mode=TwoWay, Delay=500}"/>
+                <TextBlock Text="Xmax:" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
+                <TextBox Width="50" FontSize="16" Text="{Binding XMax, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Delay=500}"/>
+                <TextBlock Text="Ymin:" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
+                <TextBox Width="50" FontSize="16" Text="{Binding YMin, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Delay=500}"/>
+                <TextBlock Text="Ymax:" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
+                <TextBox Width="50" FontSize="16" Text="{Binding YMax, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Delay=500}"/>
+                <Separator/>
                 <Button Padding="5" Command="{Binding HelpCommand}">
                     <Button.ToolTip>
                         <ToolTip Content="Вызов справки" />
@@ -163,27 +172,13 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Поля для ввода границ -->
-            <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="5">
-                <TextBlock Text="X Min:" VerticalAlignment="Center" Margin="5"/>
-                <TextBox Width="50" Text="{Binding XMin, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
-                <TextBlock Text="X Max:" VerticalAlignment="Center" Margin="5"/>
-                <TextBox Width="50" Text="{Binding XMax, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
-                <TextBlock Text="Y Min:" VerticalAlignment="Center" Margin="5"/>
-                <TextBox Width="50" Text="{Binding YMin, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
-                <TextBlock Text="Y Max:" VerticalAlignment="Center" Margin="5"/>
-                <TextBox Width="50" Text="{Binding YMax, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
-                <Button Content="Применить" Command="{Binding ApplyAxisLimitsCommand}" Margin="5"/>
-            </StackPanel>
-
-            <!-- График -->
             <lvc:CartesianChart x:Name="Chart" Grid.Row="1" Series="{Binding SeriesCollection}" 
-                        Zoom="Xy" Pan="Xy" DisableAnimations="True" Margin="5">
+                        Zoom="Xy" Pan="Xy" LegendLocation="Bottom" DataTooltip="{x:Null}" DisableAnimations="True" Margin="5">
                 <lvc:CartesianChart.AxisX>
-                    <lvc:Axis Title="X Axis" Labels="{Binding Labels}" MinValue="{Binding XMin}" MaxValue="{Binding XMax}"/>
+                    <lvc:Axis Title="X Axis" Labels="{Binding Labels}" MinValue="{Binding XMin, Mode=TwoWay, Delay=250}" MaxValue="{Binding XMax, Mode=TwoWay, Delay=250}"/>
                 </lvc:CartesianChart.AxisX>
                 <lvc:CartesianChart.AxisY>
-                    <lvc:Axis Title="Y Axis" LabelFormatter="{Binding YFormatter}" MinValue="{Binding YMin}" MaxValue="{Binding YMax}"/>
+                    <lvc:Axis Title="Y Axis" LabelFormatter="{Binding YFormatter}" MinValue="{Binding YMin, Mode=TwoWay, Delay=250}" MaxValue="{Binding YMax, Mode=TwoWay, Delay=250}"/>
                 </lvc:CartesianChart.AxisY>
             </lvc:CartesianChart>
         </Grid>
