@@ -1,4 +1,5 @@
 ﻿using LiveCharts.Wpf;
+using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,7 @@ public class MainWindowViewModel : ViewModelBase
     private EquationType _selectedEquation;
 
     private string _equationFormula;
+    private string _graphTitle;
 
     private const string _sourceCode = @"https://github.com/Alexey-Sagaydak/ODEClientServer";
     private const string _documentation = @"https://github.com/Alexey-Sagaydak/ODEClientServer/blob/master/README.md";
@@ -46,13 +48,15 @@ public class MainWindowViewModel : ViewModelBase
     private RelayCommand _solveODE;
 
     private ChartManager chartManager;
+    private Snackbar ErrorSnackbar;
 
     private const double ZoomStep = 0.2;
 
     public CartesianChart Chart { get; set; }
     public event EventHandler RequestClose;
+    public ObservableCollection<ParameterViewModel> Parameters { get; } = [];
 
-    public MainWindowViewModel(CartesianChart chart)
+    public MainWindowViewModel(CartesianChart chart, Snackbar errorSnackbar)
     {
         Chart = chart;
         chartManager = new(Chart);
@@ -61,8 +65,15 @@ public class MainWindowViewModel : ViewModelBase
         YMin = 0;
         YMax = 10;
         SelectedEquationString = EquationMapper.GetEquationString(EquationType.VanDerPol);
+        ErrorSnackbar = errorSnackbar;
 
         DrawTestGraph();
+    }
+
+    public string GraphTitle
+    {
+        get => _graphTitle;
+        set => SetProperty(ref _graphTitle, value);
     }
 
     public string SelectedMethodString
@@ -184,28 +195,50 @@ public class MainWindowViewModel : ViewModelBase
 
     private void UpdateEquationFormula()
     {
+        Parameters.Clear();
+
         switch (SelectedEquation)
         {
             case EquationType.VanDerPol:
                 EquationFormula = "y₀' = y₁\n"
                                 + "y₁' = (μ (1 - y₀²) y₁ - y₀) / p";
+                GraphTitle = "График Ван дер Поля";
+                Parameters.Add(new ParameterViewModel("mu", "μ", 6.0m));
+                Parameters.Add(new ParameterViewModel("p", "p", 1.0m));
+                Parameters.Add(new ParameterViewModel("y0_init", "н.у. y₀", 2.0m));
+                Parameters.Add(new ParameterViewModel("y1_init", "н.у. y₁", 0.0m));
                 break;
 
             case EquationType.ForcedOscillator:
                 EquationFormula = "y₀' = y₁\n"
                                 + "y₁' = -ω²y₀ - γy₁ + F cos(ωₖ t)";
+                GraphTitle = "График Принужденного осциллятора";
+                Parameters.Add(new ParameterViewModel("omega", "ω", 2.0m));
+                Parameters.Add(new ParameterViewModel("gamma", "γ", 0.1m));
+                Parameters.Add(new ParameterViewModel("F", "F", 1.0m));
+                Parameters.Add(new ParameterViewModel("omega_k", "ωₖ", 1.5m));
+                Parameters.Add(new ParameterViewModel("y0_init", "н.у. y₀", 1.0m));
+                Parameters.Add(new ParameterViewModel("y1_init", "н.у. y₁", 0.0m));
                 break;
 
             case EquationType.RobertsonSystem:
                 EquationFormula = "y₀' = -0.04y₀ + 10⁴y₁y₂\n"
                                 + "y₁' = 0.04y₀ - 10⁴y₁y₂ - 3×10⁷y₁²\n"
                                 + "y₂' = 3×10⁷y₁²";
+                GraphTitle = "График Системы Робертсона";
+                Parameters.Add(new ParameterViewModel("y0_init", "н.у. y₀", 1.0m));
+                Parameters.Add(new ParameterViewModel("y1_init", "н.у. y₁", 0.0m));
+                Parameters.Add(new ParameterViewModel("y2_init", "н.у. y₂", 0.0m));
                 break;
 
             default:
                 EquationFormula = "Выберите уравнение";
+                GraphTitle = "Неизвестный график";
                 break;
         }
+
+        Parameters.Add(new ParameterViewModel("t0", "t₀", 0.0m));
+        Parameters.Add(new ParameterViewModel("t1", "t₁", 10.0m));
     }
 
     private void DrawTestGraph()
@@ -293,10 +326,53 @@ public class MainWindowViewModel : ViewModelBase
         get => _aboutCommand ??= new RelayCommand(OpenAboutWindow);
     }
 
+    private void ShowErrorMessage(string message)
+    {
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            ErrorSnackbar.MessageQueue?.Enqueue(message);
+        });
+    }
+
     private void Solve()
     {
-        Console.WriteLine(SelectedMethod.ToString());
-        Console.WriteLine(SelectedEquation.ToString());
+        if (!ValidateParameters(out string errorMessage))
+        {
+            ShowErrorMessage(errorMessage);
+            return;
+        }
+
+        Console.WriteLine($"Выбранный метод решения: {SelectedMethod.ToString()}");
+        Console.WriteLine($"Выбранное уравнение: {SelectedEquation.ToString()}");
+        Console.WriteLine($"Название графика: {GraphTitle}");
+
+        Console.WriteLine("Параметры:");
+        foreach (var parameter in Parameters)
+        {
+            Console.WriteLine($"  {parameter.Key}: {parameter.Value}");
+        }
+    }
+
+    private bool ValidateParameters(out string errorMessage)
+    {
+        errorMessage = string.Empty;
+
+        foreach (var parameter in Parameters)
+        {
+            if (parameter.Value < -500 || parameter.Value > 500)
+            {
+                errorMessage = $"\"{parameter.Name}\" выходит за допустимые пределы (-500, 500).";
+                return false;
+            }
+        }
+
+        if (Parameters.FirstOrDefault(p => p.Key == "t1")?.Value <= Parameters.FirstOrDefault(p => p.Key == "t0")?.Value)
+        {
+            errorMessage = "t₀ должно быть меньше t₁.";
+            return false;
+        }
+
+        return true;
     }
 
     private void OpenAboutWindow(object obj)
