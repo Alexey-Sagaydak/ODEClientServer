@@ -10,6 +10,13 @@ std::mutex usersMutex;
 
 void route::RegisterResources(hv::HttpService &router, std::unordered_map<std::string, User> &users)
 {
+    router.GET("/", [](HttpRequest *req, HttpResponse *resp)
+    {
+        resp->SetBody("Server is working fine!");
+        resp->content_type = TEXT_PLAIN;
+        return 200;
+    });
+
     router.POST("/user", [&users](HttpRequest *req, HttpResponse *resp)
     {
         std::lock_guard<std::mutex> lock(usersMutex);
