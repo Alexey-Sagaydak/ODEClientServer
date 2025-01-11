@@ -19,6 +19,9 @@ namespace Client;
 
 public class MainWindowViewModel : ViewModelBase
 {
+    private readonly IServerRequest _ping_request;
+    private readonly string _serverUrl = $"http://{Constants.SOCKET}/";
+
     private double _xMin;
     private double _xMax;
     private double _yMin;
@@ -35,6 +38,11 @@ public class MainWindowViewModel : ViewModelBase
 
     private const string _sourceCode = @"https://github.com/Alexey-Sagaydak/ODEClientServer";
     private const string _documentation = @"https://github.com/Alexey-Sagaydak/ODEClientServer/blob/master/README.md";
+
+    public string ConnectionStatus => IsConnected ? "Подключен к серверу" : "Отсутствует подключение к серверу";
+    public string IconKind => IsConnected ? "NetworkOutline" : "NetworkOffOutline";
+
+    private bool _isConnected;
 
     private RelayCommand _exitCommand;
     private RelayCommand _viewSourceCodeCommand;
@@ -67,7 +75,27 @@ public class MainWindowViewModel : ViewModelBase
         SelectedEquationString = EquationMapper.GetEquationString(EquationType.VanDerPol);
         ErrorSnackbar = errorSnackbar;
 
+        _ping_request = new PingRequest();
+        StartPingLoop();
+
         DrawTestGraph();
+    }
+
+    private async void StartPingLoop()
+    {
+        while (true)
+        {
+            IsConnected = await _ping_request.ExecuteAsync(_serverUrl);
+            OnPropertyChanged(nameof(ConnectionStatus));
+            OnPropertyChanged(nameof(IconKind));
+            await Task.Delay(5000);
+        }
+    }
+
+    public bool IsConnected
+    {
+        get => _isConnected;
+        set => SetProperty(ref _isConnected, value);
     }
 
     public string GraphTitle

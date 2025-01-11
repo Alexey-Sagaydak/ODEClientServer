@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Windows.Themes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,4 +23,9 @@ public enum EquationType
     VanDerPol,
     ForcedOscillator,
     RobertsonSystem
+}
+
+public static class Constants
+{
+    public static readonly string SOCKET = "127.0.0.1:7777";
 }

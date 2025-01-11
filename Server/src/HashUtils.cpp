@@ -36,7 +36,6 @@ bool HashUtils::computeHash(const std::string& unhashed, std::string& hashed)
     return success;
 }
 
-// Метод для сравнения двух хэш-значений
 bool HashUtils::compareHashes(const std::string& hash1, const std::string& hash2) {
     return hash1 == hash2;
 }
