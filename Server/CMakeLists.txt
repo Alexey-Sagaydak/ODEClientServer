@@ -14,7 +14,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Werror -Wempty-body -Wredundan
 file(GLOB_RECURSE SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h )
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/odesolvers-lib/*.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/odesolvers-lib/*.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/odesolvers-lib/*.h )
 
 set(SOURCE_DIR_HEADER "")
 execute_process(

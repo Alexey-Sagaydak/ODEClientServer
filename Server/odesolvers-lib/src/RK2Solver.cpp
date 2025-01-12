@@ -1,4 +1,4 @@
-#include "RK2Solver.hpp"
+#include "../include/RK2Solver.hpp"
 
 RK2Solver::RK2Solver(std::function<std::vector<double>(double, const std::vector<double>&)> func, double initialStep)
     : Solver(func, initialStep) {

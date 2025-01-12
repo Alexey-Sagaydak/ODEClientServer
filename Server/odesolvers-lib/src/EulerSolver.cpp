@@ -1,4 +1,4 @@
-#include "EulerSolver.hpp"
+#include "../include/EulerSolver.hpp"
 
 void EulerSolver::Step(double t, std::vector<double>& y, double& h, double tolerance) {
     std::vector<double> dydt = f(t, y);
