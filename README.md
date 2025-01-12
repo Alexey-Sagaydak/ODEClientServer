@@ -69,14 +69,12 @@
    - Путь: /solve
    - Тело запроса: JSON  
       ```json
-      JSON: {
-        "Method": "Метод решения",
-        "Equation": "Название задачи",
-        "GraphTitle": "Заголовок графика",
-        "Parameters": {
-          "param1": <значение_параметра>,
-          . . .
-        }
+      "Method": "Метод решения",
+      "Equation": "Название задачи",
+      "GraphTitle": "Заголовок графика",
+      "Parameters": {
+        "param1": 1.0,
+        "...": 2.0
       }
       ```
    - Возвращает сообщение `Server is working fine!`
