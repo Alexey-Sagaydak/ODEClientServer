@@ -60,6 +60,15 @@ public class MainWindowViewModel : ViewModelBase
 
     private const double ZoomStep = 0.2;
 
+    private readonly ITaskSolverService _taskSolverService;
+    private string _serverResponse;
+
+    public string ServerResponse
+    {
+        get => _serverResponse;
+        set => SetProperty(ref _serverResponse, value);
+    }
+
     public CartesianChart Chart { get; set; }
     public event EventHandler RequestClose;
     public ObservableCollection<ParameterViewModel> Parameters { get; } = [];
@@ -76,6 +85,8 @@ public class MainWindowViewModel : ViewModelBase
         ErrorSnackbar = errorSnackbar;
 
         _ping_request = new PingRequest();
+        _taskSolverService = new TaskSolverService(_serverUrl);
+
         StartPingLoop();
 
         DrawTestGraph();
@@ -362,7 +373,7 @@ public class MainWindowViewModel : ViewModelBase
         });
     }
 
-    private void Solve()
+    private async void Solve()
     {
         if (!ValidateParameters(out string errorMessage))
         {
@@ -379,6 +390,18 @@ public class MainWindowViewModel : ViewModelBase
         {
             Console.WriteLine($"  {parameter.Key}: {parameter.Value}");
         }
+
+        var taskData = new TaskData
+        {
+            Method = SelectedMethod.ToString(),
+            Equation = SelectedEquation.ToString(),
+            GraphTitle = GraphTitle,
+            Parameters = ParameterConverter.ToDictionary(Parameters)
+        };
+
+        Console.WriteLine("Отправка данных на сервер...");
+        ServerResponse = await _taskSolverService.SolveTaskAsync(taskData);
+        Console.WriteLine($"Ответ от сервера: {ServerResponse}");
     }
 
     private bool ValidateParameters(out string errorMessage)

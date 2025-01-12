@@ -16,6 +16,24 @@ void route::RegisterResources(hv::HttpService &router, std::unordered_map<std::s
         resp->content_type = TEXT_PLAIN;
         return 200;
     });
+
+    router.POST("/solve", [](HttpRequest *req, HttpResponse *resp) {
+        std::string body = req->Body();
+        if (body.empty()) {
+            resp->status_code = HTTP_STATUS_BAD_REQUEST;
+            resp->SetBody("Empty JSON body");
+            resp->content_type = TEXT_PLAIN;
+            return 400;
+        }
+        std::cout << "Received JSON: " << body << std::endl;
+
+        nlohmann::json response;
+        response["status"] = "success";
+        response["message"] = "Data received successfully";
+        resp->SetBody(response.dump());
+        resp->content_type = APPLICATION_JSON;
+        return 200;
+    });
 }
 
 void route::authenticate(const HttpRequest* req, HttpResponse* resp, std::unordered_map<std::string, User> &users, bool* isAuth, User* currentUser) {
