@@ -57,6 +57,10 @@ public class MainWindowViewModel : ViewModelBase
 
     private ChartManager chartManager;
     private Snackbar ErrorSnackbar;
+    private GraphStorage storage;
+    public string XAxis { get; set; } = "y0";
+    public string YAxis { get; set; } = "y1";
+
 
     private const double ZoomStep = 0.2;
 
@@ -84,12 +88,11 @@ public class MainWindowViewModel : ViewModelBase
         SelectedEquationString = EquationMapper.GetEquationString(EquationType.VanDerPol);
         ErrorSnackbar = errorSnackbar;
 
+        storage = new GraphStorage();
         _ping_request = new PingRequest();
         _taskSolverService = new TaskSolverService(_serverUrl);
 
         StartPingLoop();
-
-        DrawTestGraph();
     }
 
     private async void StartPingLoop()
@@ -261,10 +264,13 @@ public class MainWindowViewModel : ViewModelBase
                 break;
 
             case EquationType.RobertsonSystem:
-                EquationFormula = "y₀' = -0.04y₀ + 10⁴y₁y₂\n"
-                                + "y₁' = 0.04y₀ - 10⁴y₁y₂ - 3×10⁷y₁²\n"
-                                + "y₂' = 3×10⁷y₁²";
+                EquationFormula = "y₀' = -k₁y₀ + k₂y₁y₂\n"
+                                + "y₁' = k₁y₀ - k₂y₁y₂ - k₃y₁²\n"
+                                + "y₂' = k₃y₁²";
                 GraphTitle = "График Системы Робертсона";
+                Parameters.Add(new ParameterViewModel("k1", "k₁", 0.04m));
+                Parameters.Add(new ParameterViewModel("k2", "k₂", 10000m));
+                Parameters.Add(new ParameterViewModel("k3", "k₃", 30000000m));
                 Parameters.Add(new ParameterViewModel("y0_init", "н.у. y₀", 1.0m));
                 Parameters.Add(new ParameterViewModel("y1_init", "н.у. y₁", 0.0m));
                 Parameters.Add(new ParameterViewModel("y2_init", "н.у. y₂", 0.0m));
@@ -278,39 +284,34 @@ public class MainWindowViewModel : ViewModelBase
 
         Parameters.Add(new ParameterViewModel("t0", "t₀", 0.0m));
         Parameters.Add(new ParameterViewModel("t1", "t₁", 10.0m));
+        Parameters.Add(new ParameterViewModel("tolerance", "ε", 0.0001m));
     }
 
-    private void DrawTestGraph()
+    public void DrawGraphs()
     {
-        var dataPoints1 = new List<Point>
-        {
-            new Point(0, 1),
-            new Point(1, 2),
-            new Point(2, 3),
-            new Point(3, 4),
-            new Point(4, 5)
-        };
-        chartManager.AddChart("Linear Growth", dataPoints1);
+        chartManager.ClearCharts();
 
-        var dataPoints2 = new List<Point>
+        foreach (var graphName in storage.GetAllGraphNames())
         {
-            new Point(0, 1),
-            new Point(1, 1),
-            new Point(2, 2),
-            new Point(3, 6),
-            new Point(4, 24)
-        };
-        chartManager.AddChart("Factorial Growth", dataPoints2);
+            var graph = storage.GetGraph(graphName);
 
-        var dataPoints3 = new List<Point>
-        {
-            new Point(0, 1),
-            new Point(1, 0.5),
-            new Point(2, 0.25),
-            new Point(3, 0.125),
-            new Point(4, 0.0625)
-        };
-        chartManager.AddChart("Exponential Decay", dataPoints3);
+            int xIndex = graph.Axes.IndexOf(XAxis);
+            int yIndex = graph.Axes.IndexOf(YAxis);
+
+            if (xIndex == -1 || yIndex == -1)
+            {
+                MessageBox.Show($"Не найдены данные для осей X: {XAxis} и Y: {YAxis} в графике '{graphName}'");
+                continue;
+            }
+
+            var dataPoints = new List<Point>();
+            foreach (var point in graph.Points)
+            {
+                dataPoints.Add(new Point(point[xIndex], point[yIndex]));
+            }
+
+            chartManager.AddChart(graphName, dataPoints);
+        }
 
         UpdateScale();
     }
@@ -402,6 +403,10 @@ public class MainWindowViewModel : ViewModelBase
         Console.WriteLine("Отправка данных на сервер...");
         ServerResponse = await _taskSolverService.SolveTaskAsync(taskData);
         Console.WriteLine($"Ответ от сервера: {ServerResponse}");
+
+        storage.AddGraph(GraphTitle, new SimulationResult(ServerResponse));
+
+        DrawGraphs();
     }
 
     private bool ValidateParameters(out string errorMessage)
@@ -410,9 +415,9 @@ public class MainWindowViewModel : ViewModelBase
 
         foreach (var parameter in Parameters)
         {
-            if (parameter.Value < -500 || parameter.Value > 500)
+            if (parameter.Value < Constants.MIN_VALUE || parameter.Value > Constants.MAX_VALUE)
             {
-                errorMessage = $"\"{parameter.Name}\" выходит за допустимые пределы (-500, 500).";
+                errorMessage = $"\"{parameter.Name}\" выходит за допустимые пределы ({Constants.MIN_VALUE}, {Constants.MAX_VALUE}).";
                 return false;
             }
         }

@@ -160,7 +160,7 @@
                                     <TextBlock Text="{Binding Name}" FontSize="16" Width="80"/>
                                     <materialDesign:DecimalUpDown Value="{Binding Value, UpdateSourceTrigger=PropertyChanged}" 
                                               ValueStep="0.1"
-                                              Minimum="-500" Maximum="500"
+                                              Minimum="-1000000000" Maximum="1000000000"
                                               Width="150" FontSize="16" 
                                               Margin="0,0,0,0"
                                               ToolTip="Выберите значение"/>
@@ -218,7 +218,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <lvc:CartesianChart x:Name="Chart" Grid.Row="1" Series="{Binding SeriesCollection}" 
+            <lvc:CartesianChart x:Name="Chart" Grid.Row="1" Series="{Binding SeriesCollection}"
                         Zoom="Xy" Pan="Xy" LegendLocation="Bottom" DataTooltip="{x:Null}" DisableAnimations="True" Margin="5">
                 <lvc:CartesianChart.AxisX>
                     <lvc:Axis Title="Ось X" Labels="{Binding Labels}" MinValue="{Binding XMin, Mode=TwoWay, Delay=250}" MaxValue="{Binding XMax, Mode=TwoWay, Delay=250}"/>

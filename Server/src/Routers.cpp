@@ -5,6 +5,10 @@
 #include <sstream>
 #include <boost/algorithm/string.hpp>
 #include "Routers.hpp"
+#include "odesolvers-lib/include/TaskManager.hpp"
+#include "odesolvers-lib/include/RK2Solver.hpp"
+#include "odesolvers-lib/include/EulerSolver.hpp"
+#include "ParseUtils.hpp"
 
 std::mutex usersMutex;
 
@@ -18,21 +22,53 @@ void route::RegisterResources(hv::HttpService &router, std::unordered_map<std::s
     });
 
     router.POST("/solve", [](HttpRequest *req, HttpResponse *resp) {
-        std::string body = req->Body();
-        if (body.empty()) {
-            resp->status_code = HTTP_STATUS_BAD_REQUEST;
-            resp->SetBody("Empty JSON body");
-            resp->content_type = TEXT_PLAIN;
-            return 400;
-        }
-        std::cout << "Received JSON: " << body << std::endl;
+        // try {
+            auto body = nlohmann::json::parse(req->Body());
+            std::cout << body << std::endl;
+            std::string taskName = body["Equation"].get<std::string>();
+            std::string method = body["Method"].get<std::string>();
+            nlohmann::json parameters = body["Parameters"];
+            double t0 = parameters["t0"].get<double>();
+            double tEnd = parameters["t1"].get<double>();
+            double initialStep = 0.001;
+            double tolerance = parameters["tolerance"].get<double>();
 
-        nlohmann::json response;
-        response["status"] = "success";
-        response["message"] = "Data received successfully";
-        resp->SetBody(response.dump());
-        resp->content_type = APPLICATION_JSON;
-        return 200;
+            Storage storage;
+
+            TaskManager taskManager;
+            taskManager.LoadParameters(parameters);
+            std::vector<double> y0 = ExtractInitialConditions(taskManager.parameters);
+
+            auto odeFunction = taskManager.GetTask(taskName);
+
+            if (method == "ExplicitEuler") {
+                EulerSolver solver = EulerSolver(odeFunction, initialStep);
+                solver.Solve(t0, y0, tEnd, storage, tolerance);
+            } else {
+                RK2Solver solver = RK2Solver(odeFunction, initialStep);
+                solver.Solve(t0, y0, tEnd, storage, tolerance);
+            }
+
+            nlohmann::json response;
+            response["status"] = "success";
+            response["results"] = nlohmann::json::array();
+            for (size_t i = 0; i < storage.Size(); ++i) {
+                nlohmann::json result;
+                result["t"] = storage[i].first;
+                result["values"] = storage[i].second;
+                response["results"].push_back(result);
+            }
+
+            resp->SetBody(response.dump());
+            resp->content_type = APPLICATION_JSON;
+            return 200;
+
+        // } catch (const std::exception &e) {
+        //     resp->status_code = HTTP_STATUS_BAD_REQUEST;
+        //     resp->SetBody(std::string("Error: ") + e.what());
+        //     resp->content_type = TEXT_PLAIN;
+        //     return 400;
+        // }
     });
 }
 

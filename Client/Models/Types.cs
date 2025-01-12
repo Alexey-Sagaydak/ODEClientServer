@@ -28,4 +28,6 @@ public enum EquationType
 public static class Constants
 {
     public static readonly string SOCKET = "127.0.0.1:7777";
+    public static readonly decimal MIN_VALUE = -10e7m;
+    public static readonly decimal MAX_VALUE = 10e7m;
 }
