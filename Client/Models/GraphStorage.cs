@@ -55,6 +55,11 @@ public class GraphStorage
         return _graphs.Keys.ToList();
     }
 
+    public int GetGraphCount()
+    {
+        return _graphs.Count;
+    }
+
     public void PrintAllGraphs()
     {
         Console.WriteLine("Графики в хранилище:");

@@ -14,6 +14,9 @@ using LiveCharts.Wpf.Charts.Base;
 using System.Windows.Media;
 using LiveCharts;
 using LiveCharts.Defaults;
+using System.Numerics;
+using System.Windows.Controls.Ribbon.Primitives;
+using LiveCharts.Events;
 
 namespace Client;
 
@@ -26,6 +29,11 @@ public class MainWindowViewModel : ViewModelBase
     private double _xMax;
     private double _yMin;
     private double _yMax;
+
+    private double _lastMin;
+    private double _lastMax;
+
+    private bool _draw_anyway;
 
     private string _selectedMethodString;
     private SolutionMethod _selectedMethod;
@@ -66,6 +74,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private readonly ITaskSolverService _taskSolverService;
     private string _serverResponse;
+    private System.Timers.Timer _updateTimer;
 
     public string ServerResponse
     {
@@ -85,13 +94,17 @@ public class MainWindowViewModel : ViewModelBase
         XMax = 10;
         YMin = 0;
         YMax = 10;
+        _lastMin = double.MinValue;
+        _lastMax = double.MaxValue;
         SelectedEquationString = EquationMapper.GetEquationString(EquationType.VanDerPol);
         ErrorSnackbar = errorSnackbar;
+        _draw_anyway = false;
 
         storage = new GraphStorage();
         _ping_request = new PingRequest();
         _taskSolverService = new TaskSolverService(_serverUrl);
 
+        InitializePeriodicUpdate();
         StartPingLoop();
     }
 
@@ -235,6 +248,17 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    private void InitializePeriodicUpdate()
+    {
+        _updateTimer = new System.Timers.Timer(Constants.CHART_UPDATE_TIME);
+        _updateTimer.AutoReset = true;
+        _updateTimer.Elapsed += (sender, e) => Application.Current.Dispatcher.Invoke(() =>
+        {
+            DrawGraphs();
+        });
+        _updateTimer.Start();
+    }
+
     private void UpdateEquationFormula()
     {
         Parameters.Clear();
@@ -289,6 +313,28 @@ public class MainWindowViewModel : ViewModelBase
 
     public void DrawGraphs()
     {
+        double minX = double.MaxValue, maxX = double.MinValue;
+
+        foreach (var axis in Chart.AxisX)
+        {
+            if (!double.IsNaN(axis.MinValue) && !double.IsNaN(axis.MaxValue))
+            {
+                minX = Math.Min(minX, axis.MinValue);
+                maxX = Math.Max(maxX, axis.MaxValue);
+            }
+        }
+
+        double shift = Math.Abs(maxX - minX) * 0.05;
+        minX -= shift;
+        maxX += shift;
+
+        if (_lastMin == minX && _lastMax == maxX)
+        {
+            if (!_draw_anyway) return;
+        }
+
+        _draw_anyway = false;
+
         chartManager.ClearCharts();
 
         foreach (var graphName in storage.GetAllGraphNames())
@@ -304,16 +350,36 @@ public class MainWindowViewModel : ViewModelBase
                 continue;
             }
 
-            var dataPoints = new List<Point>();
-            foreach (var point in graph.Points)
-            {
-                dataPoints.Add(new Point(point[xIndex], point[yIndex]));
-            }
+            var visiblePoints = graph.Points
+                .Where(point => point[xIndex] >= minX && point[xIndex] <= maxX)
+                .ToList();
 
-            chartManager.AddChart(graphName, dataPoints);
+            var downsampledPoints = DownsamplePoints(visiblePoints, Constants.MAX_POINTS_PER_CHART, xIndex, yIndex);
+
+            chartManager.AddChart(graphName, downsampledPoints);
         }
 
-        UpdateScale();
+        _lastMin = minX;
+        _lastMax = maxX;
+    }
+
+    private List<Point> DownsamplePoints(List<double[]> points, int maxPoints, int xIndex, int yIndex)
+    {
+        if (points.Count <= maxPoints)
+        {
+            return points.Select(p => new Point(p[xIndex], p[yIndex])).ToList();
+        }
+
+        var step = (double)points.Count / maxPoints;
+        var downsampled = new List<Point>();
+
+        for (int i = 0; i < maxPoints; i++)
+        {
+            var index = (int)(i * step);
+            downsampled.Add(new Point(points[index][xIndex], points[index][yIndex]));
+        }
+
+        return downsampled;
     }
 
     public RelayCommand SaveAsImageCommand
@@ -404,9 +470,8 @@ public class MainWindowViewModel : ViewModelBase
         ServerResponse = await _taskSolverService.SolveTaskAsync(taskData);
         Console.WriteLine($"Ответ от сервера: {ServerResponse}");
 
-        storage.AddGraph(GraphTitle, new SimulationResult(ServerResponse));
-
-        DrawGraphs();
+        storage.AddGraph($"{storage.GetGraphCount() + 1}. {GraphTitle}", new SimulationResult(ServerResponse));
+        _draw_anyway = true;
     }
 
     private bool ValidateParameters(out string errorMessage)
@@ -440,10 +505,17 @@ public class MainWindowViewModel : ViewModelBase
     private void Zoom(double factor)
     {
         if (Chart == null) return;
+        double minX = double.MaxValue, maxX = double.MinValue;
 
         foreach (var axis in Chart.AxisX)
         {
             AdjustAxis(axis, factor);
+
+            if (!double.IsNaN(axis.MinValue) && !double.IsNaN(axis.MaxValue))
+            {
+                minX = Math.Min(minX, axis.MinValue);
+                maxX = Math.Max(maxX, axis.MaxValue);
+            }
         }
 
         foreach (var axis in Chart.AxisY)
