@@ -25,6 +25,10 @@ public class MainWindowViewModel : ViewModelBase
     private readonly IServerRequest _ping_request;
     private readonly string _serverUrl = $"http://{Constants.SOCKET}/";
 
+    private string _selectedXAxis;
+    private string _selectedYAxis;
+    private List<string> _availableAxes;
+
     private double _xMin;
     private double _xMax;
     private double _yMin;
@@ -104,6 +108,7 @@ public class MainWindowViewModel : ViewModelBase
         _ping_request = new PingRequest();
         _taskSolverService = new TaskSolverService(_serverUrl);
 
+        LoadAxes();
         InitializePeriodicUpdate();
         StartPingLoop();
     }
@@ -116,6 +121,40 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged(nameof(ConnectionStatus));
             OnPropertyChanged(nameof(IconKind));
             await Task.Delay(5000);
+        }
+    }
+
+    public List<string> AvailableAxes
+    {
+        get => _availableAxes;
+        set
+        {
+            _availableAxes = value;
+            OnPropertyChanged(nameof(AvailableAxes));
+        }
+    }
+
+    public string SelectedXAxis
+    {
+        get => _selectedXAxis;
+        set
+        {
+            _selectedXAxis = value;
+            OnPropertyChanged(nameof(SelectedXAxis));
+            _draw_anyway = true;
+            UpdateScale();
+        }
+    }
+
+    public string SelectedYAxis
+    {
+        get => _selectedYAxis;
+        set
+        {
+            _selectedYAxis = value;
+            OnPropertyChanged(nameof(SelectedYAxis));
+            _draw_anyway = true;
+            UpdateScale();
         }
     }
 
@@ -248,6 +287,34 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    public void LoadAxes()
+    {
+        var allAxes = storage.GetAllGraphNames()
+            .SelectMany(graphName => storage.GetGraph(graphName).Axes)
+            .Distinct()
+            .ToList();
+
+        if (AvailableAxes != null && AvailableAxes.SequenceEqual(allAxes))
+        {
+            return;
+        }
+
+        var previousXAxis = SelectedXAxis;
+        var previousYAxis = SelectedYAxis;
+
+        AvailableAxes = allAxes;
+
+        if (!AvailableAxes.Contains(previousXAxis))
+            SelectedXAxis = AvailableAxes.FirstOrDefault();
+        else
+            SelectedXAxis = previousXAxis;
+
+        if (!AvailableAxes.Contains(previousYAxis))
+            SelectedYAxis = AvailableAxes.Skip(1).FirstOrDefault() ?? SelectedXAxis;
+        else
+            SelectedYAxis = previousYAxis;
+    }
+
     private void InitializePeriodicUpdate()
     {
         _updateTimer = new System.Timers.Timer(Constants.CHART_UPDATE_TIME);
@@ -293,8 +360,8 @@ public class MainWindowViewModel : ViewModelBase
                                 + "y₂' = k₃y₁²";
                 GraphTitle = "График Системы Робертсона";
                 Parameters.Add(new ParameterViewModel("k1", "k₁", 0.04m));
-                Parameters.Add(new ParameterViewModel("k2", "k₂", 10000m));
-                Parameters.Add(new ParameterViewModel("k3", "k₃", 30000000m));
+                Parameters.Add(new ParameterViewModel("k2", "k₂", 100m));
+                Parameters.Add(new ParameterViewModel("k3", "k₃", 300000m));
                 Parameters.Add(new ParameterViewModel("y0_init", "н.у. y₀", 1.0m));
                 Parameters.Add(new ParameterViewModel("y1_init", "н.у. y₁", 0.0m));
                 Parameters.Add(new ParameterViewModel("y2_init", "н.у. y₂", 0.0m));
@@ -307,7 +374,7 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         Parameters.Add(new ParameterViewModel("t0", "t₀", 0.0m));
-        Parameters.Add(new ParameterViewModel("t1", "t₁", 10.0m));
+        Parameters.Add(new ParameterViewModel("t1", "t₁", 20.0m));
         Parameters.Add(new ParameterViewModel("tolerance", "ε", 0.0001m));
     }
 
@@ -341,8 +408,8 @@ public class MainWindowViewModel : ViewModelBase
         {
             var graph = storage.GetGraph(graphName);
 
-            int xIndex = graph.Axes.IndexOf(XAxis);
-            int yIndex = graph.Axes.IndexOf(YAxis);
+            int xIndex = graph.Axes.IndexOf(SelectedXAxis);
+            int yIndex = graph.Axes.IndexOf(SelectedYAxis);
 
             if (xIndex == -1 || yIndex == -1)
             {
@@ -386,12 +453,21 @@ public class MainWindowViewModel : ViewModelBase
     {
         get => _saveAsImageCommand ??= new RelayCommand(SaveFile);
     }
-    
+
     public RelayCommand DeleteChartsCommand
     {
-        get => _deleteChartsCommand ??= new RelayCommand(_ => chartManager.ClearCharts());
+        get => _deleteChartsCommand ??= new RelayCommand(_ =>
+        {
+            storage.Clear();
+
+            chartManager.ClearCharts();
+
+            AvailableAxes = new List<string>();
+            SelectedXAxis = null;
+            SelectedYAxis = null;
+        });
     }
-    
+
     public RelayCommand SolveODE
     {
         get => _solveODE ??= new RelayCommand(_ => Solve());
@@ -471,6 +547,8 @@ public class MainWindowViewModel : ViewModelBase
         Console.WriteLine($"Ответ от сервера: {ServerResponse}");
 
         storage.AddGraph($"{storage.GetGraphCount() + 1}. {GraphTitle}", new SimulationResult(ServerResponse));
+        LoadAxes();
+        UpdateScale();
         _draw_anyway = true;
     }
 
@@ -599,30 +677,39 @@ public class MainWindowViewModel : ViewModelBase
 
     public void UpdateScale()
     {
-        bool flag = false;
+        if (storage == null || string.IsNullOrEmpty(SelectedXAxis) || string.IsNullOrEmpty(SelectedYAxis))
+            return;
 
         double globalXMin = double.MaxValue;
         double globalXMax = double.MinValue;
         double globalYMin = double.MaxValue;
         double globalYMax = double.MinValue;
+        bool hasData = false;
 
-        foreach (var series in Chart.Series)
+        foreach (var graphName in storage.GetAllGraphNames())
         {
-            if (series is LineSeries lineSeries && lineSeries.Values is ChartValues<ObservablePoint> values)
+            var graph = storage.GetGraph(graphName);
+
+            int xIndex = graph.Axes.IndexOf(SelectedXAxis);
+            int yIndex = graph.Axes.IndexOf(SelectedYAxis);
+
+            if (xIndex == -1 || yIndex == -1)
+                continue;
+
+            foreach (var point in graph.Points)
             {
-                foreach (var point in values)
-                {
-                    flag = true;
-                    globalXMin = Math.Min(globalXMin, point.X);
-                    globalXMax = Math.Max(globalXMax, point.X);
-                    globalYMin = Math.Min(globalYMin, point.Y);
-                    globalYMax = Math.Max(globalYMax, point.Y);
-                }
+                hasData = true;
+
+                globalXMin = Math.Min(globalXMin, point[xIndex]);
+                globalXMax = Math.Max(globalXMax, point[xIndex]);
+                globalYMin = Math.Min(globalYMin, point[yIndex]);
+                globalYMax = Math.Max(globalYMax, point[yIndex]);
             }
         }
 
-        if (!flag) return;
-        
+        if (!hasData)
+            return;
+
         double xPadding = (globalXMax - globalXMin) * 0.1;
         double yPadding = (globalYMax - globalYMin) * 0.1;
 

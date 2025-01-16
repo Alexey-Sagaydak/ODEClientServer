@@ -71,10 +71,16 @@
                     <materialDesign:PackIcon Kind="ImageOutline" />
                 </Button>
                 <Separator/>
-                <TextBlock Text="X:" FontSize="16" FontWeight="Bold" Padding="5"></TextBlock>
-                <ComboBox x:Name="FirstDependencySelector" Padding="5" FontSize="16"/>
-                <TextBlock Text="Y:" FontSize="16" FontWeight="Bold" Padding="5"/>
-                <ComboBox x:Name="SecondDependencySelector" Padding="5" FontSize="16"/>
+                <TextBlock Text="X:" FontSize="16" FontWeight="Bold" Padding="5" />
+                <ComboBox x:Name="FirstDependencySelector"
+                    ItemsSource="{Binding AvailableAxes}"
+                    SelectedItem="{Binding SelectedXAxis}"
+                    Padding="5" FontSize="16" />
+                <TextBlock Text="Y:" FontSize="16" FontWeight="Bold" Padding="5" />
+                <ComboBox x:Name="SecondDependencySelector"
+                    ItemsSource="{Binding AvailableAxes}"
+                    SelectedItem="{Binding SelectedYAxis}"
+                    Padding="5" FontSize="16" />
                 <Separator/>
                 <Button Padding="5" Command="{Binding ZoomInCommand}">
                     <Button.ToolTip>
