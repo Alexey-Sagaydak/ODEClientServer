@@ -542,14 +542,22 @@ public class MainWindowViewModel : ViewModelBase
             Parameters = ParameterConverter.ToDictionary(Parameters)
         };
 
-        Console.WriteLine("Отправка данных на сервер...");
-        ServerResponse = await _taskSolverService.SolveTaskAsync(taskData);
-        Console.WriteLine($"Ответ от сервера: {ServerResponse}");
+        try
+        {
+            Console.WriteLine("Отправка данных на сервер...");
+            ServerResponse = await _taskSolverService.SolveTaskAsync(taskData);
+            Console.WriteLine($"Ответ от сервера: {ServerResponse}");
 
-        storage.AddGraph($"{storage.GetGraphCount() + 1}. {GraphTitle}", new SimulationResult(ServerResponse));
-        LoadAxes();
-        UpdateScale();
-        _draw_anyway = true;
+            storage.AddGraph($"{storage.GetGraphCount() + 1}. {GraphTitle}", new SimulationResult(ServerResponse));
+            LoadAxes();
+            UpdateScale();
+            _draw_anyway = true;
+        }
+        catch (Exception ex)
+        {
+            ShowErrorMessage("Ошибка! Проверьте подключение к серверу.");
+        }
+        
     }
 
     private bool ValidateParameters(out string errorMessage)
