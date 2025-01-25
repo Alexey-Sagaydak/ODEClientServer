@@ -30,6 +30,6 @@ public static class Constants
     public static readonly string SOCKET = "127.0.0.1:7777";
     public static readonly decimal MIN_VALUE = -10e7m;
     public static readonly decimal MAX_VALUE = 10e7m;
-    public static readonly int MAX_POINTS_PER_CHART = 100;
-    public static readonly int CHART_UPDATE_TIME = 300;
+    public static readonly int MAX_POINTS_PER_CHART = 250;
+    public static readonly int CHART_UPDATE_TIME = 400;
 }

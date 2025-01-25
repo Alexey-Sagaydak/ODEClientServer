@@ -8,6 +8,8 @@
 #include "odesolvers-lib/include/TaskManager.hpp"
 #include "odesolvers-lib/include/RK2Solver.hpp"
 #include "odesolvers-lib/include/EulerSolver.hpp"
+#include "odesolvers-lib/include/RK23SSolver.hpp"
+#include "odesolvers-lib/include/STEKSSolver.hpp"
 #include "ParseUtils.hpp"
 
 std::mutex usersMutex;
@@ -22,7 +24,7 @@ void route::RegisterResources(hv::HttpService &router, std::unordered_map<std::s
     });
 
     router.POST("/solve", [](HttpRequest *req, HttpResponse *resp) {
-        // try {
+        try {
             auto body = nlohmann::json::parse(req->Body());
             std::cout << body << std::endl;
             std::string taskName = body["Equation"].get<std::string>();
@@ -44,9 +46,25 @@ void route::RegisterResources(hv::HttpService &router, std::unordered_map<std::s
             if (method == "ExplicitEuler") {
                 EulerSolver solver = EulerSolver(odeFunction, initialStep);
                 solver.Solve(t0, y0, tEnd, storage, tolerance);
-            } else {
+            } else if (method == "RungeKutta2") {
                 RK2Solver solver = RK2Solver(odeFunction, initialStep);
                 solver.Solve(t0, y0, tEnd, storage, tolerance);
+            } else if (method == "RK23S") {
+                RK23SSolver solver = RK23SSolver(odeFunction, initialStep);
+                solver.Solve(t0, y0, tEnd, storage, tolerance);
+            } else if (method == "STEKS") {
+                STEKSSolver solver = STEKSSolver(odeFunction, initialStep);
+                solver.Solve(t0, y0, tEnd, storage, tolerance);
+            } else if (method == "DISPD" || method == "DISPF") {
+                resp->status_code = HTTP_STATUS_BAD_REQUEST;
+                resp->SetBody("Error: Method '" + method + "' is not implemented.");
+                resp->content_type = TEXT_PLAIN;
+                return 400;
+            } else {
+                resp->status_code = HTTP_STATUS_BAD_REQUEST;
+                resp->SetBody("Error: Unknown method '" + method + "'.");
+                resp->content_type = TEXT_PLAIN;
+                return 400;
             }
 
             nlohmann::json response;
@@ -58,17 +76,17 @@ void route::RegisterResources(hv::HttpService &router, std::unordered_map<std::s
                 result["values"] = storage[i].second;
                 response["results"].push_back(result);
             }
-
             resp->SetBody(response.dump());
             resp->content_type = APPLICATION_JSON;
             return 200;
 
-        // } catch (const std::exception &e) {
-        //     resp->status_code = HTTP_STATUS_BAD_REQUEST;
-        //     resp->SetBody(std::string("Error: ") + e.what());
-        //     resp->content_type = TEXT_PLAIN;
-        //     return 400;
-        // }
+        } catch (const std::exception &e) {
+            std::cout << e.what() << std::endl;
+            resp->status_code = HTTP_STATUS_BAD_REQUEST;
+            resp->SetBody(std::string("Error: ") + e.what());
+            resp->content_type = TEXT_PLAIN;
+            return 400;
+        }
     });
 }
 

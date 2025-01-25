@@ -1,7 +1,10 @@
 #include "../include/Storage.hpp"
 #include <stdexcept>
 
-void Storage::Add(double time, const std::vector<double>& values) {
+void Storage::Add(
+    double time,
+    std::vector<double> const &values)
+{
     data.emplace_back(time, values);
 }
 

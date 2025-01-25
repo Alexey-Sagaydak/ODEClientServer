@@ -541,7 +541,7 @@ public class MainWindowViewModel : ViewModelBase
         try
         {
             ServerResponse = await _taskSolverService.SolveTaskAsync(taskData);
-
+         
             storage.AddGraph($"{storage.GetGraphCount() + 1}. {GraphTitle}", new SimulationResult(ServerResponse));
             LoadAxes();
             UpdateScale();
@@ -549,9 +549,9 @@ public class MainWindowViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            ShowErrorMessage("Ошибка! Проверьте подключение к серверу.");
+
+            ShowErrorMessage(ServerResponse);
         }
-        
     }
 
     private bool ValidateParameters(out string errorMessage)

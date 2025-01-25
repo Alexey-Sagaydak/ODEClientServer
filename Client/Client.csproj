@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Images\logo.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.104.2" />
     <PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.8" />
     <PackageReference Include="MaterialDesignColors" Version="5.2.0" />
@@ -27,7 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Images\logo.ico" />
+    <Resource Include="Images\logo.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\logo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

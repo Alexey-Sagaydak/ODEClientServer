@@ -10,17 +10,18 @@
 using json = nlohmann::json;
 
 // Тип функции для систем ОДУ
-using ODEFunction = std::function<std::vector<double>(double, const std::vector<double>&)>;
+using ODEFunction = std::function<std::vector<double>(double, std::vector<double> const &)>;
 
-class TaskManager {
+class TaskManager
+{
 private:
     std::unordered_map<std::string, ODEFunction> tasks;
 
 public:
     TaskManager();
 
-    void LoadParameters(const json& params);
-    const ODEFunction& GetTask(const std::string& taskName) const;
+    void LoadParameters(json const &params);
+    const ODEFunction& GetTask(std::string const &taskName) const;
     std::unordered_map<std::string, double> parameters;
 };
 

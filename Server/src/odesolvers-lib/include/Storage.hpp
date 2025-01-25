@@ -2,9 +2,12 @@
 #include <vector>
 #include <stdexcept>
 
-class Storage {
+class Storage
+{
 public:
-    void Add(double time, const std::vector<double>& values);
+    void Add(
+        double                     time,
+        std::vector<double> const &values);
 
     std::pair<double, std::vector<double>>& operator[](size_t index);
     const std::pair<double, std::vector<double>>& operator[](size_t index) const;
