@@ -32,16 +32,6 @@ public class SimulationResult
             .ToList();
     }
 
-    public void Print()
-    {
-        Console.WriteLine("Axes: " + string.Join(", ", Axes));
-        Console.WriteLine("Points:");
-        foreach (var point in Points)
-        {
-            Console.WriteLine(string.Join(", ", point));
-        }
-    }
-
     private class RawResult
     {
         [JsonProperty("results")]

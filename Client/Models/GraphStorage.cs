@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ClosedXML.Excel;
 
 namespace Client;
 
@@ -60,12 +62,30 @@ public class GraphStorage
         return _graphs.Count;
     }
 
-    public void PrintAllGraphs()
+    public void SaveGraphsToCsv(string filePath)
     {
-        Console.WriteLine("Графики в хранилище:");
-        foreach (var name in _graphs.Keys)
+        using (var workbook = new XLWorkbook())
         {
-            Console.WriteLine($"- {name}");
+            foreach (var (name, graph) in _graphs)
+            {
+                var worksheet = workbook.Worksheets.Add(name);
+
+                for (int i = 0; i < graph.Axes.Count; i++)
+                {
+                    worksheet.Cell(1, i + 1).Value = graph.Axes[i];
+                }
+
+                for (int i = 0; i < graph.Points.Count; i++)
+                {
+                    var point = graph.Points[i];
+                    for (int j = 0; j < point.Length; j++)
+                    {
+                        worksheet.Cell(i + 2, j + 1).Value = point[j];
+                    }
+                }
+            }
+
+            workbook.SaveAs(filePath);
         }
     }
 }

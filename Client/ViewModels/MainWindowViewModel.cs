@@ -63,6 +63,7 @@ public class MainWindowViewModel : ViewModelBase
     private RelayCommand _resetZoomCommand;
     private RelayCommand _helpCommand;
     private RelayCommand _saveAsImageCommand;
+    private RelayCommand _saveAsTextCommand;
     private RelayCommand _deleteChartsCommand;
     private RelayCommand _aboutCommand;
     private RelayCommand _solveODE;
@@ -345,7 +346,7 @@ public class MainWindowViewModel : ViewModelBase
             case EquationType.ForcedOscillator:
                 EquationFormula = "y₀' = y₁\n"
                                 + "y₁' = -ω²y₀ - γy₁ + F cos(ωₖ t)";
-                GraphTitle = "График Принужденного осциллятора";
+                GraphTitle = "Принужденный осциллятор";
                 Parameters.Add(new ParameterViewModel("omega", "ω", 2.0m));
                 Parameters.Add(new ParameterViewModel("gamma", "γ", 0.1m));
                 Parameters.Add(new ParameterViewModel("F", "F", 1.0m));
@@ -358,7 +359,7 @@ public class MainWindowViewModel : ViewModelBase
                 EquationFormula = "y₀' = -k₁y₀ + k₂y₁y₂\n"
                                 + "y₁' = k₁y₀ - k₂y₁y₂ - k₃y₁²\n"
                                 + "y₂' = k₃y₁²";
-                GraphTitle = "График Системы Робертсона";
+                GraphTitle = "Система Робертсона";
                 Parameters.Add(new ParameterViewModel("k1", "k₁", 0.04m));
                 Parameters.Add(new ParameterViewModel("k2", "k₂", 100m));
                 Parameters.Add(new ParameterViewModel("k3", "k₃", 300000m));
@@ -391,7 +392,7 @@ public class MainWindowViewModel : ViewModelBase
             }
         }
 
-        double shift = Math.Abs(maxX - minX) * 0.05;
+        double shift = Math.Abs(maxX - minX) * 0.1;
         minX -= shift;
         maxX += shift;
 
@@ -452,6 +453,11 @@ public class MainWindowViewModel : ViewModelBase
     public RelayCommand SaveAsImageCommand
     {
         get => _saveAsImageCommand ??= new RelayCommand(SaveFile);
+    }
+    
+    public RelayCommand SaveAsTextCommand
+    {
+        get => _saveAsTextCommand ??= new RelayCommand(SaveAsText);
     }
 
     public RelayCommand DeleteChartsCommand
@@ -524,16 +530,6 @@ public class MainWindowViewModel : ViewModelBase
             return;
         }
 
-        Console.WriteLine($"Выбранный метод решения: {SelectedMethod.ToString()}");
-        Console.WriteLine($"Выбранное уравнение: {SelectedEquation.ToString()}");
-        Console.WriteLine($"Название графика: {GraphTitle}");
-
-        Console.WriteLine("Параметры:");
-        foreach (var parameter in Parameters)
-        {
-            Console.WriteLine($"  {parameter.Key}: {parameter.Value}");
-        }
-
         var taskData = new TaskData
         {
             Method = SelectedMethod.ToString(),
@@ -544,9 +540,7 @@ public class MainWindowViewModel : ViewModelBase
 
         try
         {
-            Console.WriteLine("Отправка данных на сервер...");
             ServerResponse = await _taskSolverService.SolveTaskAsync(taskData);
-            Console.WriteLine($"Ответ от сервера: {ServerResponse}");
 
             storage.AddGraph($"{storage.GetGraphCount() + 1}. {GraphTitle}", new SimulationResult(ServerResponse));
             LoadAxes();
@@ -660,6 +654,49 @@ public class MainWindowViewModel : ViewModelBase
         catch (Exception ex)
         {
             MessageBox.Show($"Ошибка при сохранении изображения: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void SaveAsText(object obj)
+    {
+        var saveFileDialog = new SaveFileDialog
+        {
+            Filter = "Книга Excel|*.xlsx|All Files|*.*",
+            DefaultExt = ".xlsx",
+            FileName = "results"
+        };
+
+        if (saveFileDialog.ShowDialog() == true)
+        {
+            var filePath = saveFileDialog.FileName;
+
+            SaveChartAsText(filePath);
+        }
+    }
+
+    private void SaveChartAsText(string filePath)
+    {
+        try
+        {
+            storage.SaveGraphsToCsv(filePath);
+
+            var result = MessageBox.Show("Файл успешно сохранен! Открыть его для просмотра?",
+                                         "Успех",
+                                         MessageBoxButton.YesNo,
+                                         MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = filePath,
+                    UseShellExecute = true
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Ошибка при сохранении файла: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
