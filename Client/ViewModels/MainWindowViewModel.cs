@@ -48,6 +48,42 @@ public class MainWindowViewModel : ViewModelBase
     private string _equationFormula;
     private string _graphTitle;
 
+    private int _maxPointsPerChart;
+
+    private int _chartUpdateTime;
+
+    public int CHART_UPDATE_TIME
+    {
+        get => _chartUpdateTime;
+        set
+        {
+            _chartUpdateTime = value;
+            UpdateTimerInterval();
+            OnPropertyChanged();
+            UpdateUpdateFrequencyFlags();
+        }
+    }
+
+    public int MAX_POINTS_PER_CHART
+    {
+        get => _maxPointsPerChart;
+        set
+        {
+            _maxPointsPerChart = value;
+            OnPropertyChanged();
+            UpdateQualityFlags();
+            _draw_anyway = true;
+        }
+    }
+
+    public bool IsLowQuality { get; set; }
+    public bool IsMediumQuality { get; set; }
+    public bool IsHighQuality { get; set; }
+
+    public bool IsLowUpdateFrequency { get; set; }
+    public bool IsMediumUpdateFrequency { get; set; }
+    public bool IsHighUpdateFrequency { get; set; }
+
     private const string _sourceCode = @"https://github.com/Alexey-Sagaydak/ODEClientServer";
     private const string _documentation = @"https://github.com/Alexey-Sagaydak/ODEClientServer/blob/master/README.md";
 
@@ -67,6 +103,12 @@ public class MainWindowViewModel : ViewModelBase
     private RelayCommand _deleteChartsCommand;
     private RelayCommand _aboutCommand;
     private RelayCommand _solveODE;
+    private RelayCommand _setLowQualityCommand;
+    private RelayCommand _setMediumQualityCommand;
+    private RelayCommand _setHighQualityCommand;
+    private RelayCommand _setLowUpdateFrequencyCommand;
+    private RelayCommand _setMediumUpdateFrequencyCommand;
+    private RelayCommand _setHighUpdateFrequencyCommand;
 
     private ChartManager chartManager;
     private Snackbar ErrorSnackbar;
@@ -108,10 +150,23 @@ public class MainWindowViewModel : ViewModelBase
         storage = new GraphStorage();
         _ping_request = new PingRequest();
         _taskSolverService = new TaskSolverService(_serverUrl);
+        MAX_POINTS_PER_CHART = Constants.MEDIUM_QUALITY;
+        CHART_UPDATE_TIME = Constants.MEDIUM_UPDATE_TIME;
 
         LoadAxes();
         InitializePeriodicUpdate();
         StartPingLoop();
+    }
+
+    private void UpdateQualityFlags()
+    {
+        IsLowQuality = MAX_POINTS_PER_CHART == Constants.LOW_QUALITY;
+        IsMediumQuality = MAX_POINTS_PER_CHART == Constants.MEDIUM_QUALITY;
+        IsHighQuality = MAX_POINTS_PER_CHART == Constants.HIGH_QUALITY;
+
+        OnPropertyChanged(nameof(IsLowQuality));
+        OnPropertyChanged(nameof(IsMediumQuality));
+        OnPropertyChanged(nameof(IsHighQuality));
     }
 
     private async void StartPingLoop()
@@ -318,13 +373,31 @@ public class MainWindowViewModel : ViewModelBase
 
     private void InitializePeriodicUpdate()
     {
-        _updateTimer = new System.Timers.Timer(Constants.CHART_UPDATE_TIME);
+        _updateTimer = new System.Timers.Timer(CHART_UPDATE_TIME);
         _updateTimer.AutoReset = true;
         _updateTimer.Elapsed += (sender, e) => Application.Current.Dispatcher.Invoke(() =>
         {
             DrawGraphs();
         });
         _updateTimer.Start();
+    }
+
+    private void UpdateTimerInterval()
+    {
+        if (_updateTimer != null)
+        {
+            _updateTimer.Interval = CHART_UPDATE_TIME;
+        }
+    }
+    private void UpdateUpdateFrequencyFlags()
+    {
+        IsLowUpdateFrequency = CHART_UPDATE_TIME == Constants.LOW_UPDATE_TIME;
+        IsMediumUpdateFrequency = CHART_UPDATE_TIME == Constants.MEDIUM_UPDATE_TIME;
+        IsHighUpdateFrequency = CHART_UPDATE_TIME == Constants.HIGH_UPDATE_TIME;
+
+        OnPropertyChanged(nameof(IsLowUpdateFrequency));
+        OnPropertyChanged(nameof(IsMediumUpdateFrequency));
+        OnPropertyChanged(nameof(IsHighUpdateFrequency));
     }
 
     private void UpdateEquationFormula()
@@ -422,7 +495,7 @@ public class MainWindowViewModel : ViewModelBase
                 .Where(point => point[xIndex] >= minX && point[xIndex] <= maxX)
                 .ToList();
 
-            var downsampledPoints = DownsamplePoints(visiblePoints, Constants.MAX_POINTS_PER_CHART, xIndex, yIndex);
+            var downsampledPoints = DownsamplePoints(visiblePoints, MAX_POINTS_PER_CHART, xIndex, yIndex);
 
             chartManager.AddChart(graphName, downsampledPoints);
         }
@@ -472,6 +545,36 @@ public class MainWindowViewModel : ViewModelBase
             SelectedXAxis = null;
             SelectedYAxis = null;
         });
+    }
+
+    public RelayCommand SetLowQualityCommand
+    {
+        get => _setLowQualityCommand ??= new RelayCommand(_ => MAX_POINTS_PER_CHART = Constants.LOW_QUALITY);
+    }
+
+    public RelayCommand SetMediumQualityCommand
+    {
+        get => _setMediumQualityCommand ??= new RelayCommand(_ => MAX_POINTS_PER_CHART = Constants.MEDIUM_QUALITY);
+    }
+
+    public RelayCommand SetHighQualityCommand
+    {
+        get => _setHighQualityCommand ??= new RelayCommand(_ => MAX_POINTS_PER_CHART = Constants.HIGH_QUALITY);
+    }
+
+    public RelayCommand SetLowUpdateFrequencyCommand
+    {
+        get => _setLowUpdateFrequencyCommand ??= new RelayCommand(_ => CHART_UPDATE_TIME = Constants.LOW_UPDATE_TIME);
+    }
+
+    public RelayCommand SetMediumUpdateFrequencyCommand
+    {
+        get => _setMediumUpdateFrequencyCommand ??= new RelayCommand(_ => CHART_UPDATE_TIME = Constants.MEDIUM_UPDATE_TIME);
+    }
+
+    public RelayCommand SetHighUpdateFrequencyCommand
+    {
+        get => _setHighUpdateFrequencyCommand ??= new RelayCommand(_ => CHART_UPDATE_TIME = Constants.HIGH_UPDATE_TIME);
     }
 
     public RelayCommand SolveODE

@@ -40,8 +40,24 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+            <MenuItem Header="Настройки" ItemContainerStyle="{StaticResource MenuItemStyle}">
+                <MenuItem Header="Качество графиков" ItemContainerStyle="{StaticResource MenuItemStyle}">
+                    <MenuItem Header="Низкое" Command="{Binding SetLowQualityCommand}" IsChecked="{Binding IsLowQuality}" IsCheckable="True"/>
+                    <MenuItem Header="Среднее" Command="{Binding SetMediumQualityCommand}" IsChecked="{Binding IsMediumQuality}" IsCheckable="True"/>
+                    <MenuItem Header="Высокое" Command="{Binding SetHighQualityCommand}" IsChecked="{Binding IsHighQuality}" IsCheckable="True"/>
+                </MenuItem>
+                <MenuItem Header="Частота обновления графиков" ItemContainerStyle="{StaticResource MenuItemStyle}">
+                    <MenuItem Header="Медленно" Command="{Binding SetLowUpdateFrequencyCommand}" IsChecked="{Binding IsLowUpdateFrequency}" IsCheckable="True"/>
+                    <MenuItem Header="Средне" Command="{Binding SetMediumUpdateFrequencyCommand}" IsChecked="{Binding IsMediumUpdateFrequency}" IsCheckable="True"/>
+                    <MenuItem Header="Быстро" Command="{Binding SetHighUpdateFrequencyCommand}" IsChecked="{Binding IsHighUpdateFrequency}" IsCheckable="True"/>
+                </MenuItem>
+            </MenuItem>
             <MenuItem Header="Текст" ItemContainerStyle="{StaticResource MenuItemStyle}">
-                <MenuItem Header="Исходный код программы" Command="{Binding ViewSourceCodeCommand}"/>
+                <MenuItem Header="Исходный код программы" Command="{Binding ViewSourceCodeCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="Code"/>
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Справка" ItemContainerStyle="{StaticResource MenuItemStyle}">
                 <MenuItem Header="Вызов справки" Command="{Binding HelpCommand}">

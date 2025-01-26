@@ -5,7 +5,7 @@
         ResizeMode="NoResize" 
         SizeToContent="WidthAndHeight" 
         WindowStartupLocation="CenterScreen"
-        Width="600" Height="360" MaxWidth="600" MaxHeight="450" Icon="../resources/logo.ico">
+        Width="600" Height="360" MaxWidth="600" MaxHeight="450" Icon="../images/logo.ico">
     
     <Grid Margin="0" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
@@ -13,7 +13,7 @@
             <RowDefinition Height="5*"/>
         </Grid.RowDefinitions>
 
-        <Image Source="../resources/logo.png" 
+        <Image Source="../images/logo.png" 
                HorizontalAlignment="Center" 
                Stretch="Uniform" 
                Margin="0,20,0,20" Width="350" />
