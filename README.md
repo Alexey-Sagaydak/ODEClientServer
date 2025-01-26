@@ -56,13 +56,14 @@
 
 ## Описание интерфейса клиента
 
-![image](https://github.com/user-attachments/assets/e6f04368-ae30-4e49-8950-43b77d4a0467)
+![Описание интерфейса клиента](https://github.com/user-attachments/assets/c76bc131-c786-471d-955b-95236a34fe82)
 
 ### Меню
    | Пункт меню | Подпункты |
    | ------ | ------ |
    | Файл | ![Файл](https://github.com/user-attachments/assets/8920ed8b-1e62-4e08-be6c-702f88418dbb) |
-   | Текст | ![Текст](https://github.com/user-attachments/assets/ef1e8df6-41bb-4ab9-8b38-450cf81552b5) |
+   | Настройки | ![Настройки](https://github.com/user-attachments/assets/53cfe64a-b236-4dbb-824d-ce24a166bf80) |
+   | Текст | ![Текст](https://github.com/user-attachments/assets/c27dee81-527b-439c-a866-01b7fcfbf677) |
    | Справка | ![Справка](https://github.com/user-attachments/assets/093a9dff-3dcc-45f7-aaa8-04a2f7722bf8) |
    
 ### Панель инструментов
@@ -89,13 +90,13 @@
 
   | Задача | Параметры |
   | ------ | ------ |
-  | Уравнение Ван дер Поля | ![image](https://github.com/user-attachments/assets/8f2530af-fbbf-4395-9253-c6e7ac6001c4) |
-  | Принужденный осциллятор | ![image](https://github.com/user-attachments/assets/3ad009ae-e36f-41b6-9471-8feeed11267f) |
-  | Система Робертсона | ![image](https://github.com/user-attachments/assets/e7cd850c-b4aa-455d-8d67-a1389edb3e9f) |
+  | Уравнение Ван дер Поля | ![Уравнение Ван дер Поля](https://github.com/user-attachments/assets/8f2530af-fbbf-4395-9253-c6e7ac6001c4) |
+  | Принужденный осциллятор | ![Принужденный осциллятор](https://github.com/user-attachments/assets/3ad009ae-e36f-41b6-9471-8feeed11267f) |
+  | Система Робертсона | ![Система Робертсона](https://github.com/user-attachments/assets/e7cd850c-b4aa-455d-8d67-a1389edb3e9f) |
 
 ### Выбор метода решения
 
-![image](https://github.com/user-attachments/assets/30ce3e5e-f00b-4bd0-92c2-d7624ff3fc76)
+![Методы решения](https://github.com/user-attachments/assets/cea38627-21af-4516-a7fa-b4387e89e2b2)
 
 #### 1. Алгоритмы с контролем точности
 - [x] **Явный метод Эйлера** — простейший метод на основе формулы явного метода Эйлера для прогноза, а трапеций — для коррекции.
