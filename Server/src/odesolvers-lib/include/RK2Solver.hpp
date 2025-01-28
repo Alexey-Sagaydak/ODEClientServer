@@ -25,12 +25,12 @@ public:
         double                     tolerance) override;
 
 private:
-    const double a2 = 2.0 / 3.0;
+    const double a2  = 2.0 / 3.0;
     const double b21 = 2.0 / 3.0;
-    const double p1 = 1.0 / 4.0;
-    const double p2 = 3.0 / 4.0;
+    const double p1  = 1.0 / 4.0;
+    const double p2  = 3.0 / 4.0;
 
     const double SAFETY_FACTOR = 0.9;
-    const double MAX_FACTOR = 5.0;
-    const double MIN_FACTOR = 0.2;
+    const double MAX_FACTOR    = 5.0;
+    const double MIN_FACTOR    = 0.2;
 };

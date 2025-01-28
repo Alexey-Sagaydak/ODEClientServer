@@ -100,7 +100,7 @@ void RK23SSolver::Solve(
             t += h_attempt;
             y = y_new;
             storage.Add(t, y);
-            h = h_attempt; 
+            h = h_attempt;
         } 
         catch (const std::runtime_error&) {
             h = h_attempt * 0.5;

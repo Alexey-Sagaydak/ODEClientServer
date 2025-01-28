@@ -7,24 +7,38 @@
 class STEKSSolver : public Solver
 {
 public:
-    STEKSSolver(std::function<std::vector<double>(double, const std::vector<double>&)> func, double initialStep)
-        : Solver(func, initialStep) {}
+    STEKSSolver(
+        std::function<std::vector<double>(
+            double,
+            std::vector<double> const &)> func,
+        double                            initialStep
+    ) : Solver(func, initialStep) {}
 
-    void Step(double t, std::vector<double>& y, double& h, double tolerance) override;
-    void Solve(double t0, const std::vector<double>& y0, double tEnd, Storage& storage, double tolerance) override;
+    void Step(
+        double               t,
+        std::vector<double> &y,
+        double              &h,
+        double               tolerance) override;
+
+    void Solve(
+        double                     t0,
+        std::vector<double> const &y0,
+        double                     tEnd,
+        Storage                   &storage,
+        double                     tolerance) override;
 
 private:
-    const double SAFETY = 0.9;
-    const double MIN_SCALE = 0.1;
+    const double SAFETY    = 0.9;
+    const double MIN_SCALE = 0.2;
     const double MAX_SCALE = 5.0;
-    const double STABILITY_LIMIT = 3.5 / 6.0; // 3.5 / 6 ≈ 0.5833
 
     double computeError(
-        const std::vector<double>& k1,
-        const std::vector<double>& k2,
-        const std::vector<double>& k3,
-        const std::vector<double>& k4,
-        const std::vector<double>& k5,
-        double tolerance
+        std::vector<double> const &k1,
+        std::vector<double> const &k2,
+        std::vector<double> const &k3,
+        std::vector<double> const &k4,
+        std::vector<double> const &k5,
+        double                     h,
+        double                     tolerance
     );
 };

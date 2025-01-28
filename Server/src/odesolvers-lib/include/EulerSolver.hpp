@@ -26,6 +26,6 @@ public:
 
 private:
     const double SAFETY_FACTOR = 0.9;
-    const double MAX_FACTOR = 2.0;
-    const double MIN_FACTOR = 0.2;
+    const double MAX_FACTOR    = 2.0;
+    const double MIN_FACTOR    = 0.2;
 };
