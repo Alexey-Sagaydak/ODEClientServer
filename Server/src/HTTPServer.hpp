@@ -20,7 +20,6 @@ public:
 private:
     std::unique_ptr<hv::HttpServer> _server;
     HttpService _router;
-    std::unordered_map<std::string, User> _users;
 };
 
 #endif

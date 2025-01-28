@@ -3,20 +3,18 @@
 
 #include "HttpService.h"
 #include "HashUtils.hpp"
-#include <unordered_map>
 
-struct User {
-    std::string userId;
-    std::string username;
-    std::string password;
-    bool isAdmin;
-};
+#include <mutex>
+#include <sstream>
+#include <unordered_map>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/algorithm/string.hpp>
 
 namespace route
 {
-    void RegisterResources(hv::HttpService &router, std::unordered_map<std::string, User> &users);
-    void authenticate(const HttpRequest* req, HttpResponse* resp, std::unordered_map<std::string, User> &users, bool* isAuth, User* currentUser);
-    std::string base64_decode(const std::string& in);
+    void RegisterResources(hv::HttpService &router);
 }
 
 #endif
