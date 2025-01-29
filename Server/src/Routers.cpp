@@ -6,6 +6,7 @@
 #include "odesolvers-lib/include/EulerSolver.hpp"
 #include "odesolvers-lib/include/RK23SSolver.hpp"
 #include "odesolvers-lib/include/STEKSSolver.hpp"
+#include "odesolvers-lib/include/DISPDSolver.hpp"
 
 void route::RegisterResources(hv::HttpService &router)
 {
@@ -48,7 +49,10 @@ void route::RegisterResources(hv::HttpService &router)
             } else if (method == "STEKS") {
                 STEKSSolver solver = STEKSSolver(odeFunction, initialStep);
                 solver.Solve(t0, y0, tEnd, storage, tolerance);
-            } else if (method == "DISPD" || method == "DISPF") {
+            } else if (method == "DISPD") {
+                DISPDSolver solver = DISPDSolver(odeFunction, initialStep);
+                solver.Solve(t0, y0, tEnd, storage, tolerance);
+            } else if (method == "DISPF") {
                 resp->status_code = HTTP_STATUS_BAD_REQUEST;
                 resp->SetBody("Error: Method '" + method + "' is not implemented.");
                 resp->content_type = TEXT_PLAIN;

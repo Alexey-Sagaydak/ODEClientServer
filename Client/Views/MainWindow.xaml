@@ -190,7 +190,7 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <materialDesign:Snackbar x:Name="ErrorSnackbar" MessageQueue="{materialDesign:MessageQueue}" HorizontalAlignment="Stretch"/>
+                    <materialDesign:Snackbar x:Name="ErrorSnackbar" MessageQueue="{materialDesign:MessageQueue}" FontFamily="{DynamicResource MaterialDesignFont}" HorizontalAlignment="Stretch"/>
                     <TextBlock Text="Метод решения" FontSize="16" FontWeight="Bold" Margin="0,0,0,5"/>
                     <TextBlock Text="Алгоритмы с контролем точности:" TextWrapping="Wrap" FontSize="16" Margin="0,5,0,5"/>
                     <RadioButton x:Name="FirstRB" Content="Явный метод Эйлера" 

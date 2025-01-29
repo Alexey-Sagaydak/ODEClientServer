@@ -756,12 +756,25 @@ public class MainWindowViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Ошибка при сохранении изображения: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ErrorSnackbar.MessageQueue?.Enqueue($"Ошибка при сохранении изображения: {ex.Message}");
+            });
         }
     }
 
     private void SaveAsText(object obj)
     {
+        if (storage.GetGraphCount() == 0)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ErrorSnackbar.MessageQueue?.Enqueue("Ошибка! Для сохранения необходимо построить хотя бы один график.");
+            });
+
+            return;
+        }
+
         var saveFileDialog = new SaveFileDialog
         {
             Filter = "Книга Excel|*.xlsx|All Files|*.*",
@@ -799,7 +812,10 @@ public class MainWindowViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Ошибка при сохранении файла: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ErrorSnackbar.MessageQueue?.Enqueue($"Ошибка при сохранении файла: {ex.Message}");
+            });
         }
     }
 
