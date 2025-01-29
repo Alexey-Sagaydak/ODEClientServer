@@ -5,6 +5,8 @@
 #include "HttpService.h"
 #include "Routers.hpp"
 
+#include <thread>
+
 class HttpServer final
 {
 public:

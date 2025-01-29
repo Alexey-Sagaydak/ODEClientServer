@@ -1,7 +1,5 @@
 #include "HTTPServer.hpp"
 
-#include <thread>
-
 HttpServer::HttpServer()
 {
     _server = std::make_unique<hv::HttpServer>();

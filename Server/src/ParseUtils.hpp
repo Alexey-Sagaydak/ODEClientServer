@@ -7,6 +7,7 @@
 #include <regex>
 #include <stdexcept>
 
-std::vector<double> ExtractInitialConditions(const std::unordered_map<std::string, double>& parameters);
+std::vector<double> ExtractInitialConditions(
+    std::unordered_map<std::string, double> const &parameters);
 
 #endif // UTILS_HPP

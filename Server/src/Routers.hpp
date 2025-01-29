@@ -2,7 +2,15 @@
 #define _ROUTERS_HPP_
 
 #include "HttpService.h"
-#include "HashUtils.hpp"
+#include "ParseUtils.hpp"
+#include "HttpContext.h"
+
+#include "odesolvers-lib/include/TaskManager.hpp"
+#include "odesolvers-lib/include/RK2Solver.hpp"
+#include "odesolvers-lib/include/EulerSolver.hpp"
+#include "odesolvers-lib/include/RK23SSolver.hpp"
+#include "odesolvers-lib/include/STEKSSolver.hpp"
+#include "odesolvers-lib/include/DISPDSolver.hpp"
 
 #include <mutex>
 #include <sstream>
@@ -11,6 +19,7 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/algorithm/string.hpp>
+#include <thread>
 
 namespace route
 {
