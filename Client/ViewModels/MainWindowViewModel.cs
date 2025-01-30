@@ -1,22 +1,9 @@
 ﻿using LiveCharts.Wpf;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 using System.Windows;
-using LiveCharts.Wpf.Charts.Base;
-using System.Windows.Media;
-using LiveCharts;
-using LiveCharts.Defaults;
-using System.Numerics;
-using System.Windows.Controls.Ribbon.Primitives;
-using LiveCharts.Events;
 
 namespace Client;
 
@@ -643,17 +630,21 @@ public class MainWindowViewModel : ViewModelBase
 
         try
         {
-            ServerResponse = await _taskSolverService.SolveTaskAsync(taskData);
-         
-            storage.AddGraph($"{storage.GetGraphCount() + 1}. {GraphTitle}", new SimulationResult(ServerResponse));
-            LoadAxes();
-            UpdateScale();
-            _draw_anyway = true;
+            var response = await Task.Run(() => _taskSolverService.SolveTaskAsync(taskData));
+
+            ServerResponse = response;
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                storage.AddGraph($"{storage.GetGraphCount() + 1}. {GraphTitle}", new SimulationResult(ServerResponse));
+                LoadAxes();
+                UpdateScale();
+                _draw_anyway = true;
+            });
         }
         catch (Exception ex)
         {
-
-            ShowErrorMessage(ServerResponse);
+            ShowErrorMessage(ex.Message);
         }
     }
 
@@ -777,7 +768,7 @@ public class MainWindowViewModel : ViewModelBase
 
         var saveFileDialog = new SaveFileDialog
         {
-            Filter = "Книга Excel|*.xlsx|All Files|*.*",
+            Filter = "Книга Excel|*.xlsx|Текстовые файлы|*.txt",
             DefaultExt = ".xlsx",
             FileName = "results"
         };
@@ -785,12 +776,22 @@ public class MainWindowViewModel : ViewModelBase
         if (saveFileDialog.ShowDialog() == true)
         {
             var filePath = saveFileDialog.FileName;
+            var extension = Path.GetExtension(filePath).ToLower();
+            var baseName = Path.GetFileNameWithoutExtension(filePath);
+            var directoryPath = Path.Combine(Path.GetDirectoryName(filePath), baseName);
 
-            SaveChartAsText(filePath);
+            if (extension == ".xlsx")
+            {
+                SaveGraphAsExcel(filePath);
+            }
+            else if (extension == ".txt")
+            {
+                SaveGraphAsText(directoryPath);
+            }
         }
     }
 
-    private void SaveChartAsText(string filePath)
+    private void SaveGraphAsExcel(string filePath)
     {
         try
         {
@@ -815,6 +816,40 @@ public class MainWindowViewModel : ViewModelBase
             Application.Current.Dispatcher.Invoke(() =>
             {
                 ErrorSnackbar.MessageQueue?.Enqueue($"Ошибка при сохранении файла: {ex.Message}");
+            });
+        }
+    }
+
+    private void SaveGraphAsText(string directoryPath)
+    {
+        try
+        {
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            storage.SaveGraphsToTxt(directoryPath);
+
+            var result = MessageBox.Show("Файлы успешно сохранены! Открыть папку в проводнике?",
+                                         "Успех",
+                                         MessageBoxButton.YesNo,
+                                         MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = directoryPath,
+                    UseShellExecute = true
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ErrorSnackbar.MessageQueue?.Enqueue($"Ошибка при сохранении файлов: {ex.Message}");
             });
         }
     }

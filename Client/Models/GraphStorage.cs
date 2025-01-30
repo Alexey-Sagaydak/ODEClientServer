@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using ClosedXML.Excel;
 
 namespace Client;
@@ -86,6 +81,29 @@ public class GraphStorage
             }
 
             workbook.SaveAs(filePath);
+        }
+    }
+
+    public void SaveGraphsToTxt(string directoryPath)
+    {
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        foreach (var (name, graph) in _graphs)
+        {
+            string filePath = Path.Combine(directoryPath, $"{name}.txt");
+
+            using (var writer = new StreamWriter(filePath))
+            {
+                writer.WriteLine(string.Join("\t", graph.Axes));
+
+                foreach (var point in graph.Points)
+                {
+                    writer.WriteLine(string.Join("\t", point));
+                }
+            }
         }
     }
 }

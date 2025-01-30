@@ -1,11 +1,4 @@
-﻿using Microsoft.Windows.Themes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Client;
+﻿namespace Client;
 
 public enum SolutionMethod
 {
