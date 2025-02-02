@@ -1,6 +1,4 @@
-#ifndef _ROUTERS_HPP_
-#define _ROUTERS_HPP_
-
+#pragma once
 #include "HttpService.h"
 #include "ParseUtils.hpp"
 #include "HttpContext.h"
@@ -12,7 +10,6 @@
 #include "odesolvers-lib/include/STEKSSolver.hpp"
 #include "odesolvers-lib/include/DISPDSolver.hpp"
 
-#include <mutex>
 #include <sstream>
 #include <unordered_map>
 #include <boost/uuid/uuid.hpp>
@@ -25,5 +22,3 @@ namespace route
 {
     void RegisterResources(hv::HttpService &router);
 }
-
-#endif

@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Solver.hpp"
 
 class RK2Solver : public Solver

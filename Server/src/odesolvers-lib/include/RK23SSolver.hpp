@@ -1,8 +1,5 @@
 #pragma once
 #include "Solver.hpp"
-#include <vector>
-#include <stdexcept>
-#include <cmath>
 
 class RK23SSolver : public Solver
 {

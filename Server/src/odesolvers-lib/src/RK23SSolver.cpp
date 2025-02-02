@@ -1,5 +1,4 @@
 #include "../include/RK23SSolver.hpp"
-#include <algorithm>
 
 void RK23SSolver::Step(
         double               t,

@@ -1,11 +1,6 @@
-#ifndef _HTTP_SERVER_HPP_
-#define _HTTP_SERVER_HPP_
-
+#pragma once
 #include "HttpServer.h"
-#include "HttpService.h"
 #include "Routers.hpp"
-
-#include <thread>
 
 class HttpServer final
 {
@@ -23,5 +18,3 @@ private:
     std::unique_ptr<hv::HttpServer> _server;
     HttpService _router;
 };
-
-#endif

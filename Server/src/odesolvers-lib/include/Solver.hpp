@@ -1,11 +1,13 @@
 #pragma once
-
 #include "Storage.hpp"
 #include "CommonFunctions.hpp"
+
 #include <functional>
 #include <algorithm>
 #include <iostream>
 #include <cmath>
+#include <vector>
+#include <stdexcept>
 
 class Solver
 {

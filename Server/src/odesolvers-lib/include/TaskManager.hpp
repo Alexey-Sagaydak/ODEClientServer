@@ -1,11 +1,12 @@
-#ifndef TASK_MANAGER_HPP
-#define TASK_MANAGER_HPP
+#pragma once
+#include "HttpService.h"
 
 #include <functional>
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include "HttpService.h"
+#include <stdexcept>
+#include <cmath>
 
 using json = nlohmann::json;
 
@@ -24,5 +25,3 @@ public:
     const ODEFunction& GetTask(std::string const &taskName) const;
     std::unordered_map<std::string, double> parameters;
 };
-
-#endif // TASK_MANAGER_HPP

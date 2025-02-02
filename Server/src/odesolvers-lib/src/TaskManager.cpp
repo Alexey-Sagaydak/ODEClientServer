@@ -1,6 +1,4 @@
 #include "../include/TaskManager.hpp"
-#include <stdexcept>
-#include <cmath>
 
 TaskManager::TaskManager()
 {
