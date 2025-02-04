@@ -14,6 +14,7 @@ void route::RegisterResources(hv::HttpService& router)
         try
         {
             auto body = nlohmann::json::parse(ctx->request->body);
+            std::cout << body << std::endl;
             std::string taskName = body["Equation"].get<std::string>();
             std::string method = body["Method"].get<std::string>();
             nlohmann::json parameters = body["Parameters"];
@@ -57,6 +58,10 @@ void route::RegisterResources(hv::HttpService& router)
                     {
                         DISPDSolver solver(odeFunction, initialStep);
                         solver.Solve(t0, y0, tEnd, storage, tolerance);
+                    }
+                    else if (method == "DISPF")
+                    {
+                        throw std::runtime_error("Unsupported yet: " + method);
                     }
                     else
                     {

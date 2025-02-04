@@ -5,10 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:local="clr-namespace:Client"
+        xmlns:local="clr-namespace:Client" xmlns:system="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="Решение систем ОДУ" Height="800" Width="1200" MinWidth="500" MinHeight="200" Icon="../images/logo.ico">
 
+    <Window.Resources>
+        <local:IntToBoolConverter x:Key="IntToBoolConverter"/>
+    </Window.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -220,11 +224,53 @@
                                  Checked="RadioButton_Checked"
                                  GroupName="Methods" 
                                  FontSize="16" Margin="5 0 0 5"/>
-                    <RadioButton Content="DISPF" 
-                                 Tag="DISPF"
-                                 Checked="RadioButton_Checked"
-                                 GroupName="Methods" 
-                                 FontSize="16" Margin="5 0 0 5"/>   
+                    <StackPanel Margin="5 0 0 0">
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
+                            <RadioButton Content="DISPF(IJK)" Tag="DISPF" Checked="RadioButton_Checked" GroupName="Methods" FontSize="16" VerticalAlignment="Center"/>
+                            <Button Padding="0" VerticalAlignment="Center" Width="20" Height="20" Background="Transparent" Foreground="Black" BorderThickness="0">
+                                <Button.ToolTip>
+                                    <ToolTip Padding="15">
+                                        <StackPanel>
+                                            <TextBlock Text="Алгоритм DISPF(IJK)" FontWeight="Bold" FontSize="16" Margin="0 0 0 5" />
+                                            <TextBlock Text="1. I (Порядок схемы):" FontWeight="SemiBold" FontSize="16" Margin="0 5 0 0" />
+                                            <TextBlock Text="   0 - Расчет с переменным порядком" FontSize="16" Margin="0 0 0 0" />
+                                            <TextBlock Text="   1, 2, 5 - Фиксированная схема" FontSize="16" Margin="0 0 0 5" />
+                                            <TextBlock Text="2. J (Контроль устойчивости):" FontSize="16" FontWeight="SemiBold" Margin="0 5 0 0" />
+                                            <TextBlock Text="   0 - Контроль устойчивости" FontSize="16" Margin="0 0 0 0" />
+                                            <TextBlock Text="   ≠0 - Без контроля устойчивости" FontSize="16" Margin="0 0 0 5" />
+                                            <TextBlock Text="3. K (Метод оценки матрицы Якоби):" FontSize="16" FontWeight="SemiBold" Margin="0 5 0 0" />
+                                            <TextBlock Text="   0 - Специальная подпрограмма" FontSize="16" Margin="0 0 0 0" />
+                                            <TextBlock Text="   1 - Степенной метод" FontSize="16" Margin="0 0 0 0" />
+                                            <TextBlock Text="   2 - Осреднение по формуле:" FontSize="16" Margin="0 0 0 0" />
+                                            <TextBlock Text="         λ_cp = (1/n) * Σλ_max^i (i=1..n)" FontSize="16" Margin="0 0 0 5" />
+                                            <TextBlock Text="При J ≠ 0 параметр K игнорируется" FontSize="16" Margin="0 0 0 0" />
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Button.ToolTip>
+                                <materialDesign:PackIcon Kind="QuestionMarkCircleOutline" />
+                            </Button>
+                        </StackPanel>
+                        <StackPanel Margin="25 0 0 0">
+                            <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
+                                <TextBlock Text="I: " FontSize="16" VerticalAlignment="Center" Width="15"/>
+                                <RadioButton Content="0" FontSize="16" GroupName="I" Margin="5 0" IsChecked="{Binding SelectedI, Converter={StaticResource IntToBoolConverter}, ConverterParameter=0}"/>
+                                <RadioButton Content="1" FontSize="16" GroupName="I" Margin="5 0" IsChecked="{Binding SelectedI, Converter={StaticResource IntToBoolConverter}, ConverterParameter=1}"/>
+                                <RadioButton Content="2" FontSize="16" GroupName="I" Margin="5 0" IsChecked="{Binding SelectedI, Converter={StaticResource IntToBoolConverter}, ConverterParameter=2}"/>
+                                <RadioButton Content="5" FontSize="16" GroupName="I" Margin="5 0" IsChecked="{Binding SelectedI, Converter={StaticResource IntToBoolConverter}, ConverterParameter=5}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
+                                <TextBlock Text="J: " FontSize="16" VerticalAlignment="Center" Width="15"/>
+                                <RadioButton Content="0" FontSize="16" GroupName="J" Margin="5 0" IsChecked="{Binding SelectedJ, Converter={StaticResource IntToBoolConverter}, ConverterParameter=0}"/>
+                                <RadioButton Content="1" FontSize="16" GroupName="J" Margin="5 0" IsChecked="{Binding SelectedJ, Converter={StaticResource IntToBoolConverter}, ConverterParameter=1}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
+                                <TextBlock Text="K: " FontSize="16" VerticalAlignment="Center" Width="15"/>
+                                <RadioButton Content="0" FontSize="16" GroupName="K" Margin="5 0" IsChecked="{Binding SelectedK, Converter={StaticResource IntToBoolConverter}, ConverterParameter=0}"/>
+                                <RadioButton Content="1" FontSize="16" GroupName="K" Margin="5 0" IsChecked="{Binding SelectedK, Converter={StaticResource IntToBoolConverter}, ConverterParameter=1}"/>
+                                <RadioButton Content="2" FontSize="16" GroupName="K" Margin="5 0" IsChecked="{Binding SelectedK, Converter={StaticResource IntToBoolConverter}, ConverterParameter=2}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
             </ScrollViewer>
         </DockPanel>

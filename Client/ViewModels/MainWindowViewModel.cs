@@ -35,6 +35,28 @@ public class MainWindowViewModel : ViewModelBase
     private string _equationFormula;
     private string _graphTitle;
 
+    private int _selectedI = 0;
+    private int _selectedJ = 0;
+    private int _selectedK = 0;
+
+    public int SelectedI
+    {
+        get => _selectedI;
+        set => SetProperty(ref _selectedI, value);
+    }
+
+    public int SelectedJ
+    {
+        get => _selectedJ;
+        set => SetProperty(ref _selectedJ, value);
+    }
+
+    public int SelectedK
+    {
+        get => _selectedK;
+        set => SetProperty(ref _selectedK, value);
+    }
+
     private int _maxPointsPerChart;
 
     private int _chartUpdateTime;
@@ -627,6 +649,10 @@ public class MainWindowViewModel : ViewModelBase
             GraphTitle = GraphTitle,
             Parameters = ParameterConverter.ToDictionary(Parameters)
         };
+
+        taskData.Parameters.Add("I", SelectedI);
+        taskData.Parameters.Add("J", SelectedJ);
+        taskData.Parameters.Add("K", SelectedK);
 
         try
         {
