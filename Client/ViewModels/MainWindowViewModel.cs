@@ -668,9 +668,9 @@ public class MainWindowViewModel : ViewModelBase
                 _draw_anyway = true;
             });
         }
-        catch (Exception ex)
+        catch
         {
-            ShowErrorMessage(ex.Message);
+            ShowErrorMessage("Ошибка! Проверьте подключение к серверу и корректность введенных данных.");
         }
     }
 
