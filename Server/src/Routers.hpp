@@ -9,6 +9,7 @@
 #include "odesolvers-lib/include/RK23SSolver.hpp"
 #include "odesolvers-lib/include/STEKSSolver.hpp"
 #include "odesolvers-lib/include/DISPDSolver.hpp"
+#include "odesolvers-lib/include/DISPFSolver.hpp"
 
 #include <sstream>
 #include <unordered_map>
