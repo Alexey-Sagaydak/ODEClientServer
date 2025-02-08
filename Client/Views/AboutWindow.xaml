@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="О программе" 
         ResizeMode="NoResize" 
-        SizeToContent="WidthAndHeight" 
-        WindowStartupLocation="CenterScreen"
+        SizeToContent="WidthAndHeight" BorderThickness="0"
+        WindowStartupLocation="CenterScreen" Background="White"
         Width="600" Height="360" MaxWidth="600" MaxHeight="450" Icon="../images/logo.ico">
     
     <Grid Margin="0" VerticalAlignment="Stretch">
@@ -48,7 +48,7 @@
                 </StackPanel>
             </Grid>
 
-            <TextBlock Text="v1.1.0&#10;2025" 
+            <TextBlock Text="v1.1.1&#10;2025" 
                        FontSize="16" 
                        FontWeight="Bold"
                        TextAlignment="Center"

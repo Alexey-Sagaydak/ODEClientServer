@@ -57,6 +57,21 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Текст" ItemContainerStyle="{StaticResource MenuItemStyle}">
+                <MenuItem Header="Теоретические материалы" Command="{Binding ViewTheoryCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="BookOutline"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Краткое описание решателей" Command="{Binding ViewSolversDescrCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="CalculatorVariantOutline"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Образ сервера" Command="{Binding ViewDockerCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="Docker"/>
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem Header="Исходный код программы" Command="{Binding ViewSourceCodeCommand}">
                     <MenuItem.Icon>
                         <materialDesign:PackIcon Kind="Code"/>

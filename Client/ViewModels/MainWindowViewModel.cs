@@ -94,7 +94,10 @@ public class MainWindowViewModel : ViewModelBase
     public bool IsHighUpdateFrequency { get; set; }
 
     private const string _sourceCode = @"https://github.com/Alexey-Sagaydak/ODEClientServer";
+    private const string _docker = @"https://hub.docker.com/repository/docker/alexey123789/ode-server";
+    private const string _solversDescr = @"https://github.com/Alexey-Sagaydak/ODEClientServer/blob/master/Server/src/odesolvers-lib/doc/README.md";
     private const string _documentation = @"https://github.com/Alexey-Sagaydak/ODEClientServer/blob/master/README.md";
+    private const string _theory = @"https://github.com/Alexey-Sagaydak/ODEClientServer/blob/master/Server/src/odesolvers-lib/doc/Новиков%20Е.А.%20—%20Явные%20методы%20для%20жестких%20систем.pdf";
 
     public string ConnectionStatus => IsConnected ? "Подключен к серверу" : "Отсутствует подключение к серверу";
     public string IconKind => IsConnected ? "NetworkOutline" : "NetworkOffOutline";
@@ -103,6 +106,9 @@ public class MainWindowViewModel : ViewModelBase
 
     private RelayCommand _exitCommand;
     private RelayCommand _viewSourceCodeCommand;
+    private RelayCommand _viewSolversDescrCommand;
+    private RelayCommand _viewTheoryCommand;
+    private RelayCommand _viewDockerCommand;
     private RelayCommand _zoomInCommand;
     private RelayCommand _zoomOutCommand;
     private RelayCommand _resetZoomCommand;
@@ -599,6 +605,21 @@ public class MainWindowViewModel : ViewModelBase
     public RelayCommand ViewSourceCodeCommand
     {
         get => _viewSourceCodeCommand ??= new RelayCommand(_ => HtmlHelper.OpenInBrowser(_sourceCode));
+    }
+    
+    public RelayCommand ViewTheoryCommand
+    {
+        get => _viewTheoryCommand ??= new RelayCommand(_ => HtmlHelper.OpenInBrowser(_theory));
+    }
+    
+    public RelayCommand ViewDockerCommand
+    {
+        get => _viewDockerCommand ??= new RelayCommand(_ => HtmlHelper.OpenInBrowser(_docker));
+    }
+    
+    public RelayCommand ViewSolversDescrCommand
+    {
+        get => _viewSolversDescrCommand ??= new RelayCommand(_ => HtmlHelper.OpenInBrowser(_solversDescr));
     }
 
     public RelayCommand HelpCommand
