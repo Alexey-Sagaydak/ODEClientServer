@@ -81,7 +81,7 @@ ODEClientServer/
    | ------ | ------ |
    | Файл | ![Файл](https://github.com/user-attachments/assets/8920ed8b-1e62-4e08-be6c-702f88418dbb) |
    | Настройки | ![Настройки](https://github.com/user-attachments/assets/53cfe64a-b236-4dbb-824d-ce24a166bf80) |
-   | Текст | ![Текст](https://github.com/user-attachments/assets/c27dee81-527b-439c-a866-01b7fcfbf677) |
+   | Текст | ![Текст](https://github.com/user-attachments/assets/881eb250-4a78-4ee8-b10a-98a5763a4482) |
    | Справка | ![Справка](https://github.com/user-attachments/assets/093a9dff-3dcc-45f7-aaa8-04a2f7722bf8) |
    
 ### Панель инструментов
