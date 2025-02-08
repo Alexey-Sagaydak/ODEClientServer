@@ -61,9 +61,10 @@ void route::RegisterResources(hv::HttpService& router)
                     }
                     else if (method == "DISPF")
                     {
-                        DISPFSolver solver(
-                            odeFunction, initialStep, parameters["I"].get<int>(),
-                            parameters["J"].get<int>(), parameters["K"].get<int>());
+                        // DISPFSolver solver(
+                        //     odeFunction, initialStep, parameters["I"].get<int>(),
+                        //     parameters["J"].get<int>(), parameters["K"].get<int>());
+                        DispFSolver solver(odeFunction, initialStep);
                         solver.Solve(t0, y0, tEnd, storage, tolerance);
                     }
                     else
