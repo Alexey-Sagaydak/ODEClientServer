@@ -6,14 +6,21 @@
 #include <cmath>
 #include <limits>
 #include <functional>
+#include <algorithm>
 
-class DispFSolver : public Solver
+class DISPFSolver : public Solver
 {
 public:
-    DispFSolver(
+    // Конструктор теперь принимает дополнительные параметры:
+    // I - порядок метода (0 - переменный порядок, 1,2,5 - фиксированный порядок),
+    // J - контроль устойчивости (0 - включён, 1 - выключен),
+    // K - метод оценки матрицы Якоби (0 - специальной подпрограммой, 1 - степенной метод, 2 - осреднение),
+    // если J == 1, то K игнорируется.
+    DISPFSolver(
         std::function<std::vector<double>(double, const std::vector<double>&)> func,
         double initialStep,
-        double gamma = 0.0
+        double gamma,
+        int I, int J, int K
     );
 
     virtual void Step(
@@ -34,7 +41,7 @@ public:
 private:
     enum Method { DISPFA, DISPFB, DISPFC };
 
-    // Константы метода (взяты из старого кода)
+    // Константы метода (как в исходном коде)
     const std::array<std::array<double, 5>, 5> B = {{
         {1.0/4.0, 0, 0, 0, 0},
         {3.0/32.0, 9.0/32.0, 0, 0, 0},
@@ -63,21 +70,32 @@ private:
     static constexpr double MAXDOUBLE = 100.0e+300;
 
     // Параметры и состояние
-    std::vector<std::vector<double>> k; // Матрица коэффициентов (размер: число уравнений x 6)
-    std::vector<double> F;              // Вектор для хранения f(t,y)
+    std::vector<std::vector<double>> k; // Матрица коэффициентов (n уравнений x 6)
+    std::vector<double> F;              // Вектор для f(t,y)
     std::vector<double> Y0;             // Вспомогательный вектор
+
+    // Переменная для выбора метода
     Method currentMethod;
     int vnBreakCount = 0;
     bool jumpToRadau5 = false;
 
-    // Вспомогательная функция, вычисляющая сумму стадий для уравнения eqNum и стадии stage
+    // Новые параметры управления порядком и стабильностью:
+    bool variableOrder;   // true, если I==0 (переменный порядок)
+    int fixedOrder;       // если не переменный порядок, то фиксированный порядок (1,2 или 5)
+    bool stabilityControlEnabled; // true, если J==0 (контроль устойчивости включён)
+    int jacobianMethod;   // метод оценки Якоби: 0,1 или 2 (используется только если контроль включён)
+
+    // Вспомогательная функция для вычисления суммы стадий для уравнения eqNum и стадии stage
     double StadScalar(size_t eqNum, int stage);
 
-    // Реализация методов по типу DISPF
+    // Методы шага
     bool StepDISPFC(double& t, std::vector<double>& y, double& h, double tolerance);
     bool StepDISPFA(double& t, std::vector<double>& y, double& h, double tolerance);
     bool StepDISPFB(double& t, std::vector<double>& y, double& h, double tolerance);
 
-    // Функция оценки ошибки (перенесена без изменений из старого кода)
+    // Оценка ошибки (как в старом коде)
     double CalcVn(const std::vector<double>& /*dummy*/, const std::vector<std::vector<double>>& k);
+
+    // Новая функция для оценки наибольшего собственного значения матрицы Якоби
+    double EstimateJacobianEigenvalue(double t, const std::vector<double>& y);
 };
