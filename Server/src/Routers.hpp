@@ -15,5 +15,6 @@
 
 namespace route
 {
+    const double c = 10e-5;
     void RegisterResources(hv::HttpService &router);
 }

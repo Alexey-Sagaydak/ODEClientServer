@@ -3,11 +3,13 @@
 #include "CommonFunctions.hpp"
 
 #include <functional>
+#include <array>
 #include <algorithm>
 #include <iostream>
 #include <cmath>
 #include <vector>
 #include <stdexcept>
+#include <limits>
 
 class Solver
 {

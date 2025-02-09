@@ -51,7 +51,7 @@ ODEClientServer/
 1. Убедитесь, что в системе установлен Docker;
 2. Для запуска сервера достаточно ввести команду:
     ```bash
-    docker run -it -d -p 7777:7777 --rm alexey123789/ode-server:latest
+    docker pull alexey123789/ode-server:latest && docker run -it -d -p 7777:7777 --rm alexey123789/ode-server:latest
     ```
 3. Чтобы убедиться, что сервер работает, введите в браузере следующий адрес:
     ```
