@@ -38,6 +38,11 @@
                         <materialDesign:PackIcon Kind="ImageOutline"/>
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem Header="История решений" Click="HistoryMenuItem_Click">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="History" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem Header="Выход" Command="{Binding ExitCommand}">
                     <MenuItem.Icon>
                         <materialDesign:PackIcon Kind="ExitToApp"/>
@@ -286,6 +291,68 @@
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
+                    <TextBlock Text="DISPS" FontSize="16" FontWeight="Bold" Margin="10,10,0,5"/>
+                    <GroupBox  FontSize="16" Header="Параметры DISPS (порядок × степень)" Margin="5">
+                        <Grid Margin="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="0.25*"/>
+                                <RowDefinition Height="0.25*"/>
+                                <RowDefinition Height="0.25*"/>
+                                <RowDefinition Height="0.25*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="0.2*"/>
+                                <ColumnDefinition Width="0.2*"/>
+                                <ColumnDefinition Width="0.2*"/>
+                                <ColumnDefinition Width="0.2*"/>
+                                <ColumnDefinition Width="0.2*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" FontSize="16" Grid.Column="0" Text="" Margin="0"/>
+                            <TextBlock Grid.Row="0" FontSize="16" Grid.Column="1" Text="1" Margin="0" 
+                                FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Row="0" FontSize="16" Grid.Column="2" Text="2" Margin="0" 
+                                FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Row="0" FontSize="16" Grid.Column="3" Text="3" Margin="0" 
+                                FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Row="0" FontSize="16" Grid.Column="4" Text="4" Margin="0" 
+                                FontWeight="Bold" HorizontalAlignment="Center"/>
+
+                            <TextBlock Grid.Row="1" FontSize="16" Grid.Column="0" Text="1" Margin="0" 
+                                FontWeight="Bold" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="2" FontSize="16" Grid.Column="0" Text="2" Margin="0" 
+                                FontWeight="Bold" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="3" FontSize="16" Grid.Column="0" Text="3" Margin="0" 
+                                FontWeight="Bold" VerticalAlignment="Center"/>
+
+                            <CheckBox Grid.Row="1" FontSize="16" Grid.Column="1" IsChecked="{Binding Disps11}" 
+                                Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <CheckBox Grid.Row="1" FontSize="16" Grid.Column="2" IsChecked="{Binding Disps12}" 
+                                Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <CheckBox Grid.Row="1" FontSize="16" Grid.Column="3" IsChecked="{Binding Disps13}" 
+                                Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <CheckBox Grid.Row="1" FontSize="16" Grid.Column="4" IsChecked="{Binding Disps14}" 
+                                Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                            <CheckBox Grid.Row="2" FontSize="16" Grid.Column="1" IsChecked="{Binding Disps21}" 
+                                IsEnabled="False" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <CheckBox Grid.Row="2" FontSize="16" Grid.Column="2" IsChecked="{Binding Disps22}" 
+                                Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <CheckBox Grid.Row="2" FontSize="16" Grid.Column="3" IsChecked="{Binding Disps23}" 
+                                Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <CheckBox Grid.Row="2" FontSize="16" Grid.Column="4" IsChecked="{Binding Disps24}" 
+                                Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                            <CheckBox Grid.Row="3" FontSize="16" Grid.Column="1" IsChecked="{Binding Disps31}" 
+                                IsEnabled="False" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <CheckBox Grid.Row="3" FontSize="16" Grid.Column="2" IsChecked="{Binding Disps32}" 
+                                IsEnabled="False" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <CheckBox Grid.Row="3" FontSize="16" Grid.Column="3" IsChecked="{Binding Disps33}" 
+                                Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <CheckBox Grid.Row="3" FontSize="16" Grid.Column="4" IsChecked="{Binding Disps34}" 
+                                Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Grid>
+                    </GroupBox>
                 </StackPanel>
             </ScrollViewer>
         </DockPanel>

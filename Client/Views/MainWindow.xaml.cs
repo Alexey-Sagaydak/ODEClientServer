@@ -51,4 +51,19 @@ public partial class MainWindow : Window
             }
         }
     }
+
+    private void HistoryMenuItem_Click(object sender, RoutedEventArgs e)
+    {
+        HistoryWindow historyWindow = new HistoryWindow
+        {
+            Owner = this
+        };
+        historyWindow.Show();
+
+        LoginWindow loginWindow = new LoginWindow
+        {
+            Owner = this
+        };
+        loginWindow.Show();
+    }
 }

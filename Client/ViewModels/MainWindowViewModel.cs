@@ -57,6 +57,90 @@ public class MainWindowViewModel : ViewModelBase
         set => SetProperty(ref _selectedK, value);
     }
 
+    private bool _disps11;
+    public bool Disps11
+    {
+        get => _disps11;
+        set => SetProperty(ref _disps11, value);
+    }
+
+    private bool _disps12;
+    public bool Disps12
+    {
+        get => _disps12;
+        set => SetProperty(ref _disps12, value);
+    }
+
+    private bool _disps13;
+    public bool Disps13
+    {
+        get => _disps13;
+        set => SetProperty(ref _disps13, value);
+    }
+
+    private bool _disps14;
+    public bool Disps14
+    {
+        get => _disps14;
+        set => SetProperty(ref _disps14, value);
+    }
+
+    private bool _disps21 = false;
+    public bool Disps21
+    {
+        get => _disps21;
+        set => SetProperty(ref _disps21, value);
+    }
+
+    private bool _disps22;
+    public bool Disps22
+    {
+        get => _disps22;
+        set => SetProperty(ref _disps22, value);
+    }
+
+    private bool _disps23;
+    public bool Disps23
+    {
+        get => _disps23;
+        set => SetProperty(ref _disps23, value);
+    }
+
+    private bool _disps24;
+    public bool Disps24
+    {
+        get => _disps24;
+        set => SetProperty(ref _disps24, value);
+    }
+
+    private bool _disps31 = false;
+    public bool Disps31
+    {
+        get => _disps31;
+        set => SetProperty(ref _disps31, value);
+    }
+
+    private bool _disps32 = false;
+    public bool Disps32
+    {
+        get => _disps32;
+        set => SetProperty(ref _disps32, value);
+    }
+
+    private bool _disps33;
+    public bool Disps33
+    {
+        get => _disps33;
+        set => SetProperty(ref _disps33, value);
+    }
+
+    private bool _disps34;
+    public bool Disps34
+    {
+        get => _disps34;
+        set => SetProperty(ref _disps34, value);
+    }
+
     private int _maxPointsPerChart;
 
     private int _chartUpdateTime;
@@ -674,6 +758,19 @@ public class MainWindowViewModel : ViewModelBase
         taskData.Parameters.Add("I", SelectedI);
         taskData.Parameters.Add("J", SelectedJ);
         taskData.Parameters.Add("K", SelectedK);
+
+        taskData.Parameters.Add("Disps11", Disps11 ? 1 : 0);
+        taskData.Parameters.Add("Disps12", Disps12 ? 1 : 0);
+        taskData.Parameters.Add("Disps13", Disps13 ? 1 : 0);
+        taskData.Parameters.Add("Disps14", Disps14 ? 1 : 0);
+        taskData.Parameters.Add("Disps21", Disps21 ? 1 : 0);
+        taskData.Parameters.Add("Disps22", Disps22 ? 1 : 0);
+        taskData.Parameters.Add("Disps23", Disps23 ? 1 : 0);
+        taskData.Parameters.Add("Disps24", Disps24 ? 1 : 0);
+        taskData.Parameters.Add("Disps31", Disps31 ? 1 : 0);
+        taskData.Parameters.Add("Disps32", Disps32 ? 1 : 0);
+        taskData.Parameters.Add("Disps33", Disps33 ? 1 : 0);
+        taskData.Parameters.Add("Disps34", Disps34 ? 1 : 0);
 
         try
         {
