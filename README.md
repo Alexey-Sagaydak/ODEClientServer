@@ -79,7 +79,7 @@ ODEClientServer/
 ### Меню
    | Пункт меню | Подпункты |
    | ------ | ------ |
-   | Файл | ![Файл](https://github.com/user-attachments/assets/8920ed8b-1e62-4e08-be6c-702f88418dbb) |
+   | Файл | ![Файл](https://github.com/user-attachments/assets/b1057f58-8d93-4593-84f3-5419860ee16b) |
    | Настройки | ![Настройки](https://github.com/user-attachments/assets/53cfe64a-b236-4dbb-824d-ce24a166bf80) |
    | Текст | ![Текст](https://github.com/user-attachments/assets/881eb250-4a78-4ee8-b10a-98a5763a4482) |
    | Справка | ![Справка](https://github.com/user-attachments/assets/093a9dff-3dcc-45f7-aaa8-04a2f7722bf8) |
@@ -114,7 +114,7 @@ ODEClientServer/
 
 ### Выбор метода решения
 
-![Методы решения](https://github.com/user-attachments/assets/bc777274-6a5a-40f6-a1b8-38471227d640)
+![Методы решения](https://github.com/user-attachments/assets/8502bfa5-cdae-49da-9029-de4576ae2d29)
 
 #### 1. Алгоритмы с контролем точности
 - [x] **Явный метод Эйлера** — простейший метод на основе формулы явного метода Эйлера для прогноза, а трапеций — для коррекции.
@@ -133,6 +133,8 @@ ODEClientServer/
    | Пункт меню | Подпункты |
    | --- | ------ |
    | Описание параметров метода DISPF</br>(появляется при нажатии на знак подсказки) | ![Описание параметров DISPF](https://github.com/user-attachments/assets/0d459cdd-d86a-401e-8164-aebbf26a734e) |
+
+- [ ] **DISPS** - конструируемый алгоритм с переменным порядком, числом стадий, с контролем точности и устойчивости.
 
 > [!NOTE]
 > Более подробно можно прочитать в документации к библиотеке решателей в [Server/src/odesolvers-lib/doc/](Server/src/odesolvers-lib/doc/).
