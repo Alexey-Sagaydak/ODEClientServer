@@ -66,6 +66,10 @@ void route::RegisterResources(hv::HttpService& router)
                             parameters["J"].get<int>(), parameters["K"].get<int>());
                         solver.Solve(t0, y0, tEnd, storage, tolerance * c);
                     }
+                    else if (method == "DISPS") {
+                        DISPSSolver solver(odeFunction, initialStep, 1.5, parameters);
+                        solver.Solve(t0, y0, tEnd, storage, tolerance);
+                    }
                     else
                     {
                         throw std::runtime_error("Unknown method: " + method);

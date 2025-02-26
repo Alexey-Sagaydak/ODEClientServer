@@ -57,20 +57,6 @@ public class MainWindowViewModel : ViewModelBase
         set => SetProperty(ref _selectedK, value);
     }
 
-    private bool _disps11;
-    public bool Disps11
-    {
-        get => _disps11;
-        set => SetProperty(ref _disps11, value);
-    }
-
-    private bool _disps12;
-    public bool Disps12
-    {
-        get => _disps12;
-        set => SetProperty(ref _disps12, value);
-    }
-
     private bool _disps13;
     public bool Disps13
     {
@@ -78,67 +64,60 @@ public class MainWindowViewModel : ViewModelBase
         set => SetProperty(ref _disps13, value);
     }
 
-    private bool _disps14;
-    public bool Disps14
+    private bool _disps15;
+    public bool Disps15
     {
-        get => _disps14;
-        set => SetProperty(ref _disps14, value);
+        get => _disps15;
+        set => SetProperty(ref _disps15, value);
     }
 
-    private bool _disps21 = false;
-    public bool Disps21
+    private bool _disps16;
+    public bool Disps16
     {
-        get => _disps21;
-        set => SetProperty(ref _disps21, value);
+        get => _disps16;
+        set => SetProperty(ref _disps16, value);
     }
 
-    private bool _disps22;
-    public bool Disps22
-    {
-        get => _disps22;
-        set => SetProperty(ref _disps22, value);
-    }
-
-    private bool _disps23;
+    private bool _disps23 = false;
     public bool Disps23
     {
         get => _disps23;
         set => SetProperty(ref _disps23, value);
     }
 
-    private bool _disps24;
-    public bool Disps24
+    private bool _disps25;
+    public bool Disps25
     {
-        get => _disps24;
-        set => SetProperty(ref _disps24, value);
+        get => _disps25;
+        set => SetProperty(ref _disps25, value);
     }
 
-    private bool _disps31 = false;
-    public bool Disps31
+    private bool _disps26;
+    public bool Disps26
     {
-        get => _disps31;
-        set => SetProperty(ref _disps31, value);
+        get => _disps26;
+        set => SetProperty(ref _disps26, value);
     }
 
-    private bool _disps32 = false;
-    public bool Disps32
-    {
-        get => _disps32;
-        set => SetProperty(ref _disps32, value);
-    }
-
-    private bool _disps33;
+    private bool _disps33 = false;
     public bool Disps33
     {
         get => _disps33;
         set => SetProperty(ref _disps33, value);
     }
 
-    private bool _disps34;
-    public bool Disps34
+    private bool _disps35 = false;
+    public bool Disps35
     {
-        get => _disps34;
-        set => SetProperty(ref _disps34, value);
+        get => _disps35;
+        set => SetProperty(ref _disps35, value);
+    }
+
+    private bool _disps36;
+    public bool Disps36
+    {
+        get => _disps36;
+        set => SetProperty(ref _disps36, value);
     }
 
     private int _maxPointsPerChart;
@@ -759,18 +738,15 @@ public class MainWindowViewModel : ViewModelBase
         taskData.Parameters.Add("J", SelectedJ);
         taskData.Parameters.Add("K", SelectedK);
 
-        taskData.Parameters.Add("Disps11", Disps11 ? 1 : 0);
-        taskData.Parameters.Add("Disps12", Disps12 ? 1 : 0);
         taskData.Parameters.Add("Disps13", Disps13 ? 1 : 0);
-        taskData.Parameters.Add("Disps14", Disps14 ? 1 : 0);
-        taskData.Parameters.Add("Disps21", Disps21 ? 1 : 0);
-        taskData.Parameters.Add("Disps22", Disps22 ? 1 : 0);
+        taskData.Parameters.Add("Disps15", Disps15 ? 1 : 0);
+        taskData.Parameters.Add("Disps16", Disps16 ? 1 : 0);
         taskData.Parameters.Add("Disps23", Disps23 ? 1 : 0);
-        taskData.Parameters.Add("Disps24", Disps24 ? 1 : 0);
-        taskData.Parameters.Add("Disps31", Disps31 ? 1 : 0);
-        taskData.Parameters.Add("Disps32", Disps32 ? 1 : 0);
+        taskData.Parameters.Add("Disps25", Disps25 ? 1 : 0);
+        taskData.Parameters.Add("Disps26", Disps26 ? 1 : 0);
         taskData.Parameters.Add("Disps33", Disps33 ? 1 : 0);
-        taskData.Parameters.Add("Disps34", Disps34 ? 1 : 0);
+        taskData.Parameters.Add("Disps35", Disps35 ? 1 : 0);
+        taskData.Parameters.Add("Disps36", Disps36 ? 1 : 0);
 
         try
         {

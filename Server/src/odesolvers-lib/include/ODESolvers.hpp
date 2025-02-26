@@ -5,3 +5,4 @@
 #include "STEKSSolver.hpp"
 #include "DISPDSolver.hpp"
 #include "DISPFSolver.hpp"
+#include "DISPSSolver.hpp"

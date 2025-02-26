@@ -7,7 +7,8 @@ public enum SolutionMethod
     RK23S,
     STEKS,
     DISPD,
-    DISPF
+    DISPF,
+    DISPS
 }
 
 public enum EquationType

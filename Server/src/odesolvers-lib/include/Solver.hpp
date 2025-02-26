@@ -10,6 +10,7 @@
 #include <vector>
 #include <stdexcept>
 #include <limits>
+#include <map>
 
 class Solver
 {
