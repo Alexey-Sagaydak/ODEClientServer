@@ -1,5 +1,18 @@
 #include "Routers.hpp"
 
+static DispsEnabledFlags ParseDispsFlags(const nlohmann::json& params)
+{
+    DispsEnabledFlags flags{};
+    flags.Disps13 = (params.contains("Disps13") && params["Disps13"].get<int>() == 1);
+    flags.Disps15 = (params.contains("Disps15") && params["Disps15"].get<int>() == 1);
+    flags.Disps23 = (params.contains("Disps23") && params["Disps23"].get<int>() == 1);
+    flags.Disps25 = (params.contains("Disps25") && params["Disps25"].get<int>() == 1);
+    flags.Disps35 = (params.contains("Disps35") && params["Disps35"].get<int>() == 1);
+    flags.Disps36 = (params.contains("Disps36") && params["Disps36"].get<int>() == 1);
+
+    return flags;
+}
+
 void route::RegisterResources(hv::HttpService& router)
 {
     router.GET("/", [](HttpRequest* req, HttpResponse* resp)
@@ -66,9 +79,19 @@ void route::RegisterResources(hv::HttpService& router)
                             parameters["J"].get<int>(), parameters["K"].get<int>());
                         solver.Solve(t0, y0, tEnd, storage, tolerance * c);
                     }
-                    else if (method == "DISPS") {
-                        DISPSSolver solver(odeFunction, initialStep, 1.5, parameters);
-                        solver.Solve(t0, y0, tEnd, storage, tolerance);
+                    else if (method == "DISPS")
+                    {
+                        auto flags = ParseDispsFlags(parameters);
+                        
+                        DISPSSolver solver(odeFunction, initialStep, flags);
+                        auto results = solver.Solve(t0, y0, tEnd, tolerance);
+
+                        for (auto& row : results)
+                        {
+                            double t_val = row[0];
+                            std::vector<double> y_vals(row.begin() + 1, row.end());
+                            storage.Add(t_val, y_vals);
+                        }
                     }
                     else
                     {
