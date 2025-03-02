@@ -57,7 +57,7 @@ public class GraphStorage
         return _graphs.Count;
     }
 
-    public void SaveGraphsToCsv(string filePath)
+    public void SaveGraphsToXlsx(string filePath)
     {
         using (var workbook = new XLWorkbook())
         {
@@ -81,6 +81,29 @@ public class GraphStorage
             }
 
             workbook.SaveAs(filePath);
+        }
+    }
+
+    public void SaveGraphsToCsv(string directoryPath)
+    {
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        foreach (var (name, graph) in _graphs)
+        {
+            string filePath = Path.Combine(directoryPath, $"{name}.csv");
+
+            using (var writer = new StreamWriter(filePath))
+            {
+                writer.WriteLine(string.Join(",", graph.Axes));
+
+                foreach (var point in graph.Points)
+                {
+                    writer.WriteLine(string.Join(",", point));
+                }
+            }
         }
     }
 

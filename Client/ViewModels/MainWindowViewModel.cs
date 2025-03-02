@@ -888,7 +888,7 @@ public class MainWindowViewModel : ViewModelBase
 
         var saveFileDialog = new SaveFileDialog
         {
-            Filter = "Книга Excel|*.xlsx|Текстовые файлы|*.txt",
+            Filter = "Книга Excel|*.xlsx|Текстовые файлы|*.txt|CSV файлы|*.csv",
             DefaultExt = ".xlsx",
             FileName = "results"
         };
@@ -908,6 +908,39 @@ public class MainWindowViewModel : ViewModelBase
             {
                 SaveGraphAsText(directoryPath);
             }
+            else if (extension == ".csv")
+            {
+                SaveGraphAsCsv(filePath);
+            }
+        }
+    }
+
+    private void SaveGraphAsCsv(string filePath)
+    {
+        try
+        {
+            storage.SaveGraphsToCsv(filePath);
+
+            var result = MessageBox.Show("Файл успешно сохранен! Открыть его для просмотра?",
+                                         "Успех",
+                                         MessageBoxButton.YesNo,
+                                         MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = filePath,
+                    UseShellExecute = true
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ErrorSnackbar.MessageQueue?.Enqueue($"Ошибка при сохранении файла: {ex.Message}");
+            });
         }
     }
 
@@ -915,7 +948,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         try
         {
-            storage.SaveGraphsToCsv(filePath);
+
 
             var result = MessageBox.Show("Файл успешно сохранен! Открыть его для просмотра?",
                                          "Успех",
