@@ -1,80 +1,133 @@
 #pragma once
+
 #include <vector>
 #include <functional>
 #include <stdexcept>
 #include <cmath>
+#include <string>
 
-struct DispsEnabledFlags
-{
-    bool Disps13;
-    bool Disps15;
-
-    bool Disps23;
-    bool Disps25;
-
-    bool Disps35;
-    bool Disps36;
+/*
+    Флаги, указывающие, какие схемы включены (3ст,5ст,6ст и 1,2,3 порядок).
+*/
+struct DispsEnabledFlags {
+    bool Disps13 = false; // 3 стадии, 1 порядок
+    bool Disps15 = false; // 5 стадий, 1 порядок
+    bool Disps23 = false; // 3 стадии, 2 порядок
+    bool Disps25 = false; // 5 стадий, 2 порядок
+    bool Disps35 = false; // 5 стадий, 3 порядок
+    bool Disps36 = false; // 6 стадий, 3 порядок
 };
 
-// Структура, описывающая один вариант DISPS (число стадий + коэффициенты p)
-struct DispsVariant
-{
-    int                 stages;
+/*
+    Описание одного варианта DISPS:
+      - stages: 3,5 или 6
+      - order: 1,2 или 3
+      - p: вектор коэффициентов p_i
+*/
+struct DispsVariant {
+    int stages;
+    int order;
     std::vector<double> p;
+    double gamma;
 };
 
+/*
+    Класс DISPSSolver:
+      - хранит несколько вариантов схем (DispsVariant)
+      - умеет делать шаги (Step3Stage, Step5Stage, Step6Stage)
+      - умеет контролировать точность и устойчивость (для 1,2,3 порядка)
+      - умеет переключать метод (SwitchScheme)
+*/
 class DISPSSolver
 {
 public:
-    // Конструктор принимает:
-    //   - odeFunc: правая часть ОДУ
+    // Конструктор:
+    //   - f: правая часть ОДУ
     //   - initialStep: начальный шаг
-    //   - flags: набор флажков, какие методы включать (Disps13, Disps23, и т.д.)
-    DISPSSolver(std::function<std::vector<double>(
-                    double,
-                    std::vector<double> const &)> odeFunc,
-                double                            initialStep,
-                DispsEnabledFlags const          &flags);
+    //   - flags: какие схемы включены
+    DISPSSolver(std::function<std::vector<double>(double, const std::vector<double>&)> f,
+                double initialStep,
+                const DispsEnabledFlags& flags);
 
-    // Метод решения. Накапливает точки (t, y) и возвращает их
-    std::vector<std::vector<double>> Solve(double                     t0,
-                                           std::vector<double> const &y0,
-                                           double                     tEnd,
-                                           double                     tolerance);
+    // Основной метод решения:
+    //   - t0, y0: начальные условия
+    //   - tEnd: конечное время
+    //   - tolerance: допуск
+    // Возвращает массив вида [[t, y[0], y[1], ...], [...], ...]
+    std::vector<std::vector<double>> Solve(double t0,
+                                           const std::vector<double>& y0,
+                                           double tEnd,
+                                           double tolerance);
 
 private:
     // Ссылка на функцию правой части
-    std::function<std::vector<double>(double, const std::vector<double>&)> f;
-    // Начальный шаг
-    double stepSize;
+    std::function<std::vector<double>(double, const std::vector<double>&)> f_;
+    // Текущий базовый шаг
+    double stepSize_;
 
-    // Вектор включённых вариантов (число стадий + коэффициенты p)
-    std::vector<DispsVariant> methods;
-    int currentMethodIndex; // Пока всегда 0
+    // Набор включённых схем
+    std::vector<DispsVariant> variants_;
+    // Индекс текущей схемы
+    int currentIndex_;
 
-    // Функция, выполняющая один шаг, выбирая нужную схему по числу стадий
-    void DoStep(
-        double               t,
-        std::vector<double> &y,
-        double              &h,
-        DispsVariant const  &variant);
+    // Выполняет один шаг (без контроля), возвращает yNext и заполняет kStages
+    std::vector<double> DoOneStep(double t,
+                                  const std::vector<double>& y,
+                                  double h,
+                                  const DispsVariant& variant,
+                                  std::vector<std::vector<double>>& kStages);
 
-    // Отдельные реализации шага для 3-, 5- и 6-стадийных методов
-    static std::vector<double> Step3Stage(double t,
-                                          std::vector<double> const &y,
-                                          double h,
-                                          std::function<std::vector<double>(double, const std::vector<double>&)> f,
-                                          std::vector<double> const &p);
+    // Функции для 3,5,6 стадий
+    // Они заполняют kStages[i] = k_i, а возвращают yNext
+    static std::vector<double> Step3Stage(
+        double t,
+        const std::vector<double>& y,
+        double h,
+        std::function<std::vector<double>(double,const std::vector<double>&)> f,
+        const std::vector<double>& p,
+        std::vector<std::vector<double>>& kStages);
 
-    static std::vector<double> Step5Stage(double t,
-                                          std::vector<double> const &y,
-                                          double h,
-                                          std::function<std::vector<double>(double, const std::vector<double>&)> f,
-                                          std::vector<double> const &p);
+    static std::vector<double> Step5Stage(
+        double t,
+        const std::vector<double>& y,
+        double h,
+        std::function<std::vector<double>(double,const std::vector<double>&)> f,
+        const std::vector<double>& p,
+        std::vector<std::vector<double>>& kStages);
 
-    static std::vector<double> Step6Stage(double t,
-                                          std::vector<double> const &y,
-                                          double h,
-                                          std::function<std::vector<double>(double, const std::vector<double>&)> f,
-                                          std::vector<double> const &p);
+    static std::vector<double> Step6Stage(
+        double t,
+        const std::vector<double>& y,
+        double h,
+        std::function<std::vector<double>(double,const std::vector<double>&)> f,
+        const std::vector<double>& p,
+        std::vector<std::vector<double>>& kStages);
+
+    // Контроль точности/устойчивости (1,2,3 порядок)
+    bool Control1stOrder(const std::vector<std::vector<double>>& kStages,
+                         const std::vector<double>& yOld,
+                         const std::vector<double>& yNew,
+                         double h,
+                         double tolerance,
+                         double& newH,
+                         bool& needSwitch);
+
+    bool Control2ndOrder(const std::vector<std::vector<double>>& kStages,
+                         const std::vector<double>& yOld,
+                         const std::vector<double>& yNew,
+                         double h,
+                         double tolerance,
+                         double& newH,
+                         bool& needSwitch);
+
+    bool Control3rdOrder(const std::vector<std::vector<double>>& kStages,
+                         const std::vector<double>& yOld,
+                         const std::vector<double>& yNew,
+                         double h,
+                         double tolerance,
+                         double& newH,
+                         bool& needSwitch);
+
+    // Переключение схемы (пример)
+    void SwitchScheme(int currentOrder);
 };
