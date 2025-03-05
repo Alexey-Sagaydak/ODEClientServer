@@ -83,7 +83,8 @@ void route::RegisterResources(hv::HttpService& router)
                     {
                         auto flags = ParseDispsFlags(parameters);
                         
-                        DISPSSolver solver(odeFunction, initialStep, flags);
+                        //DISPSSolver solver(odeFunction, initialStep, flags);
+                        DISPSSolver_old solver(odeFunction, initialStep, flags);
                         auto results = solver.Solve(t0, y0, tEnd, tolerance);
 
                         for (auto& row : results)

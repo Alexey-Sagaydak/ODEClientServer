@@ -6,3 +6,4 @@
 #include "DISPDSolver.hpp"
 #include "DISPFSolver.hpp"
 #include "DISPSSolver.hpp"
+#include "DISPSSolver_old.hpp"
