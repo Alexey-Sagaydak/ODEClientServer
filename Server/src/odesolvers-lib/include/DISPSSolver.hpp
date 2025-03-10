@@ -20,12 +20,12 @@ struct DispsVariant {
     int stages;             // Число стадий (3, 5 или 6)
     int order;              // Порядок метода (1, 2 или 3)
     std::vector<double> p;  // Коэффициенты
-    double gamma;           // Порог устойчивости для переключения
+    double gamma;           // Длина интервала устойчивости
 };
 
 class DISPSSolver {
 public:
-    // Конструктор: f - функция ОДУ, initialStep - начальный шаг, flags - выбранные схемы
+    // f - функция ОДУ, initialStep - начальный шаг, flags - выбранные схемы
     DISPSSolver(std::function<std::vector<double>(double, const std::vector<double>&)> f,
                 double initialStep,
                 const DispsEnabledFlags& flags);
@@ -42,7 +42,6 @@ private:
     std::vector<DispsVariant> variants_;
     int currentIndex_;
 
-    // Выполнение одного шага без контроля
     std::vector<double> DoOneStep(double t,
                                   const std::vector<double>& y,
                                   double h,
