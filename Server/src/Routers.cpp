@@ -47,44 +47,11 @@ void route::RegisterResources(hv::HttpService& router)
                     std::vector<double> y0 = ExtractInitialConditions(taskManager.parameters);
                     auto odeFunction = taskManager.GetTask(taskName);
 
-                    if (method == "ExplicitEuler")
-                    {
-                        EulerSolver solver(odeFunction, initialStep);
-                        solver.Solve(t0, y0, tEnd, storage, tolerance);
-                    }
-                    else if (method == "RungeKutta2")
-                    {
-                        RK2Solver solver(odeFunction, initialStep);
-                        solver.Solve(t0, y0, tEnd, storage, tolerance);
-                    }
-                    else if (method == "RK23S")
-                    {
-                        RK23SSolver solver(odeFunction, initialStep);
-                        solver.Solve(t0, y0, tEnd, storage, tolerance);
-                    }
-                    else if (method == "STEKS")
-                    {
-                        STEKSSolver solver(odeFunction, initialStep);
-                        solver.Solve(t0, y0, tEnd, storage, tolerance);
-                    }
-                    else if (method == "DISPD")
-                    {
-                        DISPDSolver solver(odeFunction, initialStep);
-                        solver.Solve(t0, y0, tEnd, storage, tolerance);
-                    }
-                    else if (method == "DISPF")
-                    {
-                        DISPFSolver solver(
-                            odeFunction, initialStep, 0, parameters["I"].get<int>(),
-                            parameters["J"].get<int>(), parameters["K"].get<int>());
-                        solver.Solve(t0, y0, tEnd, storage, tolerance * c);
-                    }
-                    else if (method == "DISPS")
+                    if (method == "DISPS")
                     {
                         auto flags = ParseDispsFlags(parameters);
                         
                         DISPSSolver solver(odeFunction, initialStep, flags);
-                        //DISPSSolver_old solver(odeFunction, initialStep, flags);
                         auto results = solver.Solve(t0, y0, tEnd, tolerance);
 
                         for (auto& row : results)

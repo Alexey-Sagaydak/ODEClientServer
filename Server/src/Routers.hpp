@@ -3,7 +3,9 @@
 #include "ParseUtils.hpp"
 #include "HttpContext.h"
 
-#include "odesolvers-lib/include/ODESolvers.hpp"
+#include "odesolvers-lib/include/DISPSSolver.hpp"
+#include "odesolvers-lib/include/Storage.hpp"
+#include "odesolvers-lib/include/TaskManager.hpp"
 
 #include <sstream>
 #include <unordered_map>
