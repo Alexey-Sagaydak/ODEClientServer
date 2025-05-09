@@ -44,11 +44,11 @@
                 </StackPanel>
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="Научный руководитель: " FontSize="16" FontWeight="Bold" TextWrapping="Wrap" />
-                    <TextBlock Text="к.т.н., доцент&#10;Достовалов Дмитрий Николаевич" FontSize="16" Margin="0,0,0,5" />
+                    <TextBlock Text="к.т.н.&#10;Достовалов Дмитрий Николаевич" FontSize="16" Margin="0,0,0,5" />
                 </StackPanel>
             </Grid>
 
-            <TextBlock Text="v1.2.0&#10;2025" 
+            <TextBlock Text="v1.2.1&#10;2025" 
                        FontSize="16" 
                        FontWeight="Bold"
                        TextAlignment="Center"

@@ -230,6 +230,7 @@ public class MainWindowViewModel : ViewModelBase
         _taskSolverService = new TaskSolverService(_serverUrl);
         MAX_POINTS_PER_CHART = Constants.MEDIUM_QUALITY;
         CHART_UPDATE_TIME = Constants.MEDIUM_UPDATE_TIME;
+        GraphTitle = Constants.Methods[SolutionMethod.ExplicitEuler];
 
         LoadAxes();
         InitializePeriodicUpdate();
@@ -337,6 +338,7 @@ public class MainWindowViewModel : ViewModelBase
         {
             if (_selectedMethod != value)
             {
+                GraphTitle = Constants.Methods[value];
                 _selectedMethod = value;
             }
         }
@@ -487,7 +489,6 @@ public class MainWindowViewModel : ViewModelBase
             case EquationType.VanDerPol:
                 EquationFormula = "y₀' = y₁\n"
                                 + "y₁' = (μ (1 - y₀²) y₁ - y₀) / p";
-                GraphTitle = "График Ван дер Поля";
                 Parameters.Add(new ParameterViewModel("mu", "μ", 6.0m));
                 Parameters.Add(new ParameterViewModel("p", "p", 1.0m));
                 Parameters.Add(new ParameterViewModel("y0_init", "н.у. y₀", 2.0m));
@@ -497,7 +498,6 @@ public class MainWindowViewModel : ViewModelBase
             case EquationType.ForcedOscillator:
                 EquationFormula = "y₀' = y₁\n"
                                 + "y₁' = -ω²y₀ - γy₁ + F cos(ωₖ t)";
-                GraphTitle = "Принужденный осциллятор";
                 Parameters.Add(new ParameterViewModel("omega", "ω", 2.0m));
                 Parameters.Add(new ParameterViewModel("gamma", "γ", 0.1m));
                 Parameters.Add(new ParameterViewModel("F", "F", 1.0m));
@@ -510,7 +510,6 @@ public class MainWindowViewModel : ViewModelBase
                 EquationFormula = "y₀' = -k₁y₀ + k₂y₁y₂\n"
                                 + "y₁' = k₁y₀ - k₂y₁y₂ - k₃y₁²\n"
                                 + "y₂' = k₃y₁²";
-                GraphTitle = "Система Робертсона";
                 Parameters.Add(new ParameterViewModel("k1", "k₁", 0.04m));
                 Parameters.Add(new ParameterViewModel("k2", "k₂", 100m));
                 Parameters.Add(new ParameterViewModel("k3", "k₃", 300000m));

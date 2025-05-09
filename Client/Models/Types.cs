@@ -33,4 +33,15 @@ public static class Constants
     public static readonly int LOW_QUALITY = 100;
     public static readonly int MEDIUM_QUALITY = 200;
     public static readonly int HIGH_QUALITY = 400;
+
+    public static readonly Dictionary<SolutionMethod, string> Methods = new()
+    {
+        { SolutionMethod.ExplicitEuler, "Метод Эйлера" },
+        { SolutionMethod.RungeKutta2, "RK21" },
+        { SolutionMethod.RK23S, "RK23S" },
+        { SolutionMethod.STEKS, "STEKS" },
+        { SolutionMethod.DISPD, "DISPD" },
+        { SolutionMethod.DISPF, "DISPF" },
+        { SolutionMethod.DISPS, "DISPS" }
+    };
 }
